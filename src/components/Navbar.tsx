@@ -86,9 +86,9 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-2 md:gap-4">
-                    {/* <Link href="/cart" className="h-[24px] md:h-[45px] px-4 md:px-6 rounded-full border-[2px] md:border-[2px] border-red-700 text-white font-['Inter'] text-xs md:text-xl font-semibold hover:bg-red-700/20 transition-colors flex items-center">
+                    <Link href="/cart" className="h-[24px] md:h-[45px] px-4 md:px-6 rounded-full border-[2px] md:border-[2px] border-red-700 text-white font-['Inter'] text-xs md:text-xl font-semibold hover:bg-red-700/20 transition-colors flex items-center">
                         Buy Now
-                    </Link> */}
+                    </Link>
 
                     <button
                         onClick={() => setOpen(!open)}

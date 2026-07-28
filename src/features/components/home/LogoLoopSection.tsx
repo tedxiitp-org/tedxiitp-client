@@ -12,23 +12,22 @@ const expeditionPatrons = [
 ];
 
 const legacyPatrons1=[
-  { image: "/sponsImages/Group 48095564.svg", alt: "Sponsor 1" },
-  { image: "/sponsImages/Group 48095563.svg", alt: "Sponsor 2" },
-  { image: "/sponsImages/Group 48095562.svg", alt: "Sponsor 3" },
-  { image: "/sponsImages/Group 48095561.svg", alt: "Sponsor 4" },
-  { image: "/sponsImages/Group 48095560.svg", alt: "Sponsor 5" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 1" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 2" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 3" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 4" },
 ]
 const legacyPatrons2=[
-  { image: "/sponsImages/Group 48095559.svg", alt: "Sponsor 1" },
-  { image: "/sponsImages/Group 48095558.svg", alt: "Sponsor 2" },
-  { image: "/sponsImages/Group 48095557.svg", alt: "Sponsor 3" },
-  { image: "/sponsImages/Group 48095548.svg", alt: "Sponsor 4" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 1" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 2" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 3" },
+  { image: "/SponsorsLogo.svg", alt: "Sponsor 4" },
 ]
 
 export default function SponsorsSection() {
   return (
     <div>
-       {/* <div className="flex text-center justify-center items-center">
+       <div className="flex text-center justify-center items-center">
             <h1 className="uppercase font-bebas text-5xl text-center">expedition Patrons</h1>
             <Image src="/expeditionLogo.svg" alt="expedition patrons" width={126} height={126}/>
         </div>
@@ -38,7 +37,7 @@ export default function SponsorsSection() {
         gap={ { mobile: 10, tablet: 24, desktop: 32 }}
         scaleOnHover
         ariaLabel="Our sponsors"
-        /> */}
+        />
       
        <div className="flex text-center justify-center items-center mt-4 md:mt-6 lg:mt-8">
             <h1 className="uppercase font-bebas text-5xl text-center">legacy patrons</h1>
