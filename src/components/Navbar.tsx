@@ -42,7 +42,7 @@ export default function Navbar() {
         setOpen(false);
     }, [pathname]);
 
-    // Lock body scroll when drawer is open (fixes mobile scroll-through incl. iOS Safari)
+    // Lock body scroll when drawer is open
     useEffect(() => {
         if (open) {
             const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -52,8 +52,9 @@ export default function Navbar() {
             document.body.style.left = "0";
             document.body.style.right = "0";
             document.body.style.overflow = "hidden";
-            // Only compensate for the scrollbar on desktop. // In mobile/DevTools emulation this value can become huge // (e.g. 760px) and break the layout. 
-            if (window.innerWidth >= 768 && scrollbarWidth > 0 && scrollbarWidth < 100) { document.body.style.paddingRight = `${scrollbarWidth}px` };
+            if (window.innerWidth >= 768 && scrollbarWidth > 0 && scrollbarWidth < 100) { 
+                document.body.style.paddingRight = `${scrollbarWidth}px`;
+            }
         } else {
             const scrollY = parseInt(document.body.style.top || "0") * -1;
             document.body.style.position = "";
@@ -78,7 +79,7 @@ export default function Navbar() {
 
     return (
         <>
-            <header className={`sticky top-0 z-120 w-full h-16 md:h-20 flex items-center justify-between px-4 sm:px-6 md:px-8 py-2 md:py-3 overflow-hidden transition-all duration-500 ${open ? "bg-transparent" : scrolled ? "bg-black/40 backdrop-blur-md" : "bg-black"}`}>
+            <header className={`sticky top-0 z-40 w-full h-16 md:h-20 flex items-center justify-between px-4 sm:px-6 md:px-8 py-2 md:py-3 overflow-hidden transition-all duration-500 ${open ? "bg-transparent" : scrolled ? "bg-black/40 backdrop-blur-md" : "bg-black"}`}>
                 <div className="flex items-center h-full">
                     <Link href="/" className="flex items-center h-full">
                         <Image src="/logo png.svg" alt="TEDxIITPatna" width={527} height={108} className="h-full w-auto object-contain" style={{ width: "auto" }} priority />
@@ -86,13 +87,9 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-2 md:gap-4">
-                    {/* <Link href="/cart" className="h-[24px] md:h-[45px] px-4 md:px-6 rounded-full border-[2px] md:border-[2px] border-red-700 text-white font-['Inter'] text-xs md:text-xl font-semibold hover:bg-red-700/20 transition-colors flex items-center">
-                        Buy Now
-                    </Link> */}
-
                     <button
                         onClick={() => setOpen(!open)}
-                        className="size-[36px] md:size-[45px] bg-gradient-to-b from-red-600 to-red-900 rounded-full flex flex-col items-center justify-center gap-[4px] md:gap-[5px] hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-red-600/30 z-[130] cursor-pointer">
+                        className="relative z-[140] size-[36px] md:size-[45px] bg-gradient-to-b from-red-600 to-red-900 rounded-full flex flex-col items-center justify-center gap-[4px] md:gap-[5px] hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-red-600/30 cursor-pointer">
                         <span className={`w-[16px] md:w-5 h-[2px] bg-white rounded-full transition-all duration-300 ${open ? "translate-y-[6px] md:translate-y-[7px] rotate-45" : ""}`} />
                         <span className={`w-[16px] md:w-5 h-[2px] bg-white rounded-full transition-all duration-300 ${open ? "opacity-0" : ""}`} />
                         <span className={`w-[16px] md:w-5 h-[2px] bg-white rounded-full transition-all duration-300 ${open ? "-translate-y-[6px] md:-translate-y-[7px] -rotate-45" : ""}`} />
@@ -101,9 +98,11 @@ export default function Navbar() {
             </header>
 
             <div
-                className={`fixed inset-0 w-screen h-screen bg-black/95 backdrop-blur-md z-[115] flex px-6 md:px-16 py-8 md:py-12 transition-all duration-500 ease-in-out ${open ? "opacity-100 translate-x-0 pointer-events-auto visible" : "opacity-0 translate-x-full pointer-events-none invisible"}`}
+                className={`fixed inset-0 w-screen h-[100dvh] bg-black/95 backdrop-blur-md z-[115] flex px-6 md:px-16 pt-20 md:py-12 transition-all duration-500 ease-in-out ${open ? "opacity-100 translate-x-0 pointer-events-auto visible" : "opacity-0 translate-x-full pointer-events-none invisible"}`}
+                style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}
                 onClick={() => setOpen(false)}
             >
+                {/* Desktop Left Info Column */}
                 <div
                     className={`hidden md:flex flex-col justify-end gap-4 w-1/2 transition-all duration-700 ease-out transform ${open ? "translate-x-0 opacity-100 delay-150" : "-translate-x-8 opacity-0"}`}
                     onClick={(e) => e.stopPropagation()}
@@ -111,8 +110,8 @@ export default function Navbar() {
                     <Image src="/logo png.svg" alt="TEDxIITPatna" width={200} height={45} className="-ml-5" />
                     <div className="mt-8">
                         <p className="text-red-500 font-['Inter'] text-xl font-bold mb-1">Contact Us</p>
-                        <Link href="mailto:ted@iitp.ac.in" className="flex items-center gap-2 text-white font-['Inter'] text-sm hover:text-red-500 transition-colors">
-                            ✉ ted@iitp.ac.in
+                        <Link href="mailto:tedx@iitp.ac.in" className="flex items-center gap-2 text-white font-['Inter'] text-sm hover:text-red-500 transition-colors">
+                            ✉ tedx@iitp.ac.in
                         </Link>
                     </div>
                     <div>
@@ -127,8 +126,11 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                <div className="flex flex-col justify-between md:justify-center md:gap-4 w-full md:w-1/2 h-full min-h-0 overflow-y-auto no-scrollbar py-4 md:py-0" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex flex-col justify-center gap-0 shrink-0 flex-1  min-h-0 md:flex-none md:my-0">
+                {/* Main Content Container (Right Side / Full Mobile) */}
+                <div className="flex flex-col justify-between w-full md:w-1/2 h-full min-h-0 overflow-y-auto no-scrollbar" onClick={(e) => e.stopPropagation()}>
+                    
+                    {/* Top Navigation Links */}
+                    <div className="flex flex-col justify-start md:justify-center gap-0 shrink-0 py-2">
                         {navLinks.map(({ label, href }, index) => {
                             const distance = lastHoveredIndex >= 0 ? Math.abs(index - lastHoveredIndex) : index;
                             const undimDelay = !hovered ? distance * 40 : 0;
@@ -148,13 +150,14 @@ export default function Navbar() {
                         })}
                     </div>
 
+                    {/* Bottom Mobile Footer */}
                     <div
-                        className={`md:hidden flex flex-col gap-3 shrink-0 pt-4 border-t border-white/10 transition-all duration-700 ease-out transform ${open ? "translate-y-0 opacity-100 delay-300" : "translate-y-4 opacity-0"}`}
+                        className={`md:hidden mt-auto flex flex-col gap-3 shrink-0 pt-4 border-t border-white/10 transition-all duration-700 ease-out transform ${open ? "translate-y-0 opacity-100 delay-300" : "translate-y-4 opacity-0"}`}
                     >
                         <div className="flex items-center gap-2">
                             <span className="text-red-500 font-['Inter'] text-sm sm:text-base font-bold">Contact:</span>
-                            <Link href="mailto:ted@iitp.ac.in" className="flex items-center gap-1.5 text-white/90 font-['Inter'] text-sm sm:text-base hover:text-red-500 transition-colors">
-                                ✉ ted@iitp.ac.in
+                            <Link href="mailto:tedx@iitp.ac.in" className="flex items-center gap-1.5 text-white/90 font-['Inter'] text-sm sm:text-base hover:text-red-500 transition-colors">
+                                ✉ tedx@iitp.ac.in
                             </Link>
                         </div>
                         <div className="flex items-center gap-3 flex-nowrap">
@@ -168,6 +171,7 @@ export default function Navbar() {
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </>
