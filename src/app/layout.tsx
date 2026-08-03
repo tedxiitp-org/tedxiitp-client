@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils";
 import localFont from "next/font/local";
 
 export const metadata: Metadata = {
-  title: "TEDxIITPatna | Ideas Worth Spreading",
-  description: "Official website of TEDxIITPatna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
+  title: "TEDxIIT Patna | Ideas Worth Spreading",
+  description: "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
   keywords: [
     "TEDx",
     "IIT Patna",
-    "TEDxIITPatna",
+    "TEDxIIT Patna",
     "TEDxIITP",
     "Patna",
     "Conference",
@@ -23,19 +23,22 @@ export const metadata: Metadata = {
     "Speakers",
     "IITP Events"
   ],
-  authors: [{ name: "TEDxIITPatna Team" }],
+  authors: [{ name: "TEDxIIT Patna Team" }],
   metadataBase: new URL("https://tedxiitp.org"),
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
-    title: "TEDxIITPatna | Ideas Worth Spreading",
-    description: "Official website of TEDxIITPatna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
+    title: "TEDxIIT Patna | Ideas Worth Spreading",
+    description: "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
     url: "https://tedxiitp.org",
-    siteName: "TEDxIITPatna",
+    siteName: "TEDxIIT Patna",
     images: [
       {
         url: "/logo.svg",
         width: 800,
         height: 600,
-        alt: "TEDxIITPatna Logo",
+        alt: "TEDxIIT Patna Logo",
       },
     ],
     locale: "en_US",
@@ -43,8 +46,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TEDxIITPatna | Ideas Worth Spreading",
-    description: "Official website of TEDxIITPatna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
+    title: "TEDxIIT Patna | Ideas Worth Spreading",
+    description: "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
     images: ["/logo.svg"],
   },
 };
