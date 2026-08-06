@@ -90,7 +90,7 @@ export default function GamesPage() {
       className="flex flex-col items-center justify-start min-h-screen py-12 px-4 md:px-8"
     >
       <h1 className="text-4xl md:text-6xl font-bold mb-4 font-[family-name:var(--font-molend)] text-white tracking-wider text-center">
-        TEDx<span className="text-red-600">IITPatna</span> Games
+        TED<span className="text-[0.75em] lowercase">x</span><span className="text-red-600">IITPatna</span> Games
       </h1>
       <p className="text-lg md:text-xl text-gray-400 max-w-2xl text-center mb-8 font-[family-name:var(--font-inter)]">
         Somewhere past the edge of the known world, adventure awaits. Select a game below and step into the unmapped

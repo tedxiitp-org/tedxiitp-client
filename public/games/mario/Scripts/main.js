@@ -123,7 +123,7 @@ var Level = Base.extend({
 		
 		this.reset();
 		
-		if(settings.lifes < 0) {
+		if(settings.lifes <= 0) {
 			$('#go-coins').text(settings.coins || 0);
 			$('#go-level').text(this.id + 1);
 			$('#game-over-screen').css('display', 'flex');
