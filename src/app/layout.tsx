@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     "IITP Events"
   ],
   authors: [{ name: "TEDxIIT Patna Team" }],
-  metadataBase: new URL("https://tedxiitp.org"),
+  metadataBase: new URL("https://tedxiitp.iitp.ac.in"),
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
     title: "TEDxIIT Patna | Ideas Worth Spreading",
     description: "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
-    url: "https://tedxiitp.org",
+    url: "https://tedxiitp.iitp.ac.in",
     siteName: "TEDxIIT Patna",
     images: [
       {
@@ -118,18 +118,18 @@ const albertSans = Albert_Sans({
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html 
-      lang="en" 
-      suppressHydrationWarning 
+    <html
+      lang="en"
+      suppressHydrationWarning
       className={cn(
-        bebasNeue.variable, 
-        cormorant.variable, 
-        spaceGrotesk.variable, 
+        bebasNeue.variable,
+        cormorant.variable,
+        spaceGrotesk.variable,
         inter.variable,       // Fix: added .variable
         molend.variable,      // This now registers properly
         sourceSans.variable,  // Fix: added .variable
         albertSans.variable,  // Fix: added .variable
-        geist.variable, 
+        geist.variable,
         lemonMilk.variable
       )}
     >
