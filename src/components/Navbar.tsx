@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaInstagram, FaLinkedinIn, FaFacebookF, FaXTwitter } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 
 const navLinks = [
     { label: "Home", href: "/" },
@@ -87,12 +88,14 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-2 md:gap-4">
+                    {/* Header Menu Toggle (Stays as three lines always) */}
                     <button
                         onClick={() => setOpen(!open)}
-                        className="relative z-[140] size-[36px] md:size-[45px] bg-gradient-to-b from-red-600 to-red-900 rounded-full flex flex-col items-center justify-center gap-[4px] md:gap-[5px] hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-red-600/30 cursor-pointer">
-                        <span className={`w-[16px] md:w-5 h-[2px] bg-white rounded-full transition-all duration-300 ${open ? "translate-y-[6px] md:translate-y-[7px] rotate-45" : ""}`} />
-                        <span className={`w-[16px] md:w-5 h-[2px] bg-white rounded-full transition-all duration-300 ${open ? "opacity-0" : ""}`} />
-                        <span className={`w-[16px] md:w-5 h-[2px] bg-white rounded-full transition-all duration-300 ${open ? "-translate-y-[6px] md:-translate-y-[7px] -rotate-45" : ""}`} />
+                        className="relative z-[140] size-[36px] md:size-[45px] bg-gradient-to-b from-red-600 to-red-900 rounded-full flex flex-col items-center justify-center gap-[4px] md:gap-[5px] hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-red-600/30 cursor-pointer"
+                        aria-label="Toggle Menu">
+                        <span className="w-[16px] md:w-5 h-[2px] bg-white rounded-full" />
+                        <span className="w-[16px] md:w-5 h-[2px] bg-white rounded-full" />
+                        <span className="w-[16px] md:w-5 h-[2px] bg-white rounded-full" />
                     </button>
                 </div>
             </header>
@@ -102,6 +105,18 @@ export default function Navbar() {
                 style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}
                 onClick={() => setOpen(false)}
             >
+                {/* Dedicated Close Button in Overlay */}
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setOpen(false);
+                    }}
+                    aria-label="Close menu"
+                    className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-[130] size-[38px] md:size-[45px] bg-gradient-to-b from-red-600 to-red-900 rounded-full flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-red-600/30 cursor-pointer"
+                >
+                    <IoClose className="text-2xl md:text-3xl" />
+                </button>
+
                 {/* Desktop Left Info Column */}
                 <div
                     className={`hidden md:flex flex-col justify-end gap-4 w-1/2 transition-all duration-700 ease-out transform ${open ? "translate-x-0 opacity-100 delay-150" : "-translate-x-8 opacity-0"}`}
