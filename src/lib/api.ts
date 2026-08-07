@@ -5,7 +5,7 @@ export interface LeaderboardEntry {
   date?: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(/\/+$/, '');
 
 const GAME_IDS: Record<string, string> = {
   'mario': process.env.NEXT_PUBLIC_MARIO_GAME_ID || '6a75e32948da39ed1933ac59'
