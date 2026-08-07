@@ -30,14 +30,17 @@ export default function MarioGamePage() {
       // Security: You might want to verify origin here
       if (event.data && event.data.type === 'GAME_OVER' && event.data.game === 'mario') {
         const score = event.data.score;
-        // Get username from localStorage (set in the /games page modal)
+        // Get userId and username from localStorage (set in the /games page modal)
+        const userId = localStorage.getItem('tedx_userid');
         const playerName = localStorage.getItem('tedx_username') || "Anonymous";
         
-        if (playerName) {
-          await submitScore('mario', playerName, score);
-          setGameOverData({ score, show: true });
+        if (userId) {
+          await submitScore('mario', userId, score);
           console.log(`Score of ${score} submitted for ${playerName}`);
+        } else {
+          console.error('User ID not found. Score not submitted.');
         }
+        setGameOverData({ score, show: true });
       }
     };
 

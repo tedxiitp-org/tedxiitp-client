@@ -7,6 +7,7 @@ import { Lock, Trophy, X, Gamepad2, ArrowRight } from "lucide-react";
 import GlobalLeaderboard from "../../components/GlobalLeaderboard";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { registerUser } from "../../lib/api";
 
 const games = [
 // ... (omitting games array changes)
@@ -50,6 +51,7 @@ export default function GamesPage() {
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [pendingGameUrl, setPendingGameUrl] = useState<string | null>(null);
   const [usernameInput, setUsernameInput] = useState("");
+  const [authError, setAuthError] = useState("");
   const router = useRouter();
 
   // Check if username exists on mount
@@ -70,15 +72,23 @@ export default function GamesPage() {
     }
   };
 
-  const handleUsernameSubmit = (e: React.FormEvent) => {
+  const handleUsernameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = usernameInput.trim();
     if (!trimmed) return;
     
-    localStorage.setItem('tedx_username', trimmed);
-    setShowUsernameModal(false);
-    if (pendingGameUrl) {
-      router.push(pendingGameUrl);
+    setAuthError("");
+    const response = await registerUser(trimmed);
+    
+    if (response.data && response.data.userId) {
+      localStorage.setItem('tedx_username', trimmed);
+      localStorage.setItem('tedx_userid', response.data.userId);
+      setShowUsernameModal(false);
+      if (pendingGameUrl) {
+        router.push(pendingGameUrl);
+      }
+    } else {
+      setAuthError(response.error || "Failed to register user. Please try again.");
     }
   };
 
@@ -171,7 +181,7 @@ export default function GamesPage() {
       {/* Username Modal */}
       <AnimatePresence>
         {showUsernameModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
             {/* Backdrop */}
             <motion.div 
               initial={{ opacity: 0 }}
@@ -212,13 +222,21 @@ export default function GamesPage() {
                   <input
                     type="text"
                     value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
+                    onChange={(e) => {
+                      setUsernameInput(e.target.value);
+                      setAuthError(""); // Clear error on typing
+                    }}
                     placeholder="E.g., Player π"
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 text-white font-[family-name:var(--font-inter)] focus:outline-none focus:border-red-500 transition-colors placeholder:text-gray-600"
                     autoFocus
                     maxLength={20}
                     required
                   />
+                  {authError && (
+                    <p className="absolute -bottom-6 left-0 text-red-500 text-xs font-[family-name:var(--font-inter)]">
+                      {authError}
+                    </p>
+                  )}
                 </div>
                 
                 <button

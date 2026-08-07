@@ -2,29 +2,30 @@ export interface LeaderboardEntry {
   id: string;
   playerName: string;
   score: number;
-  date: string;
+  date?: string;
 }
 
-/**
- * MOCK API wrappers for the Leaderboard.
- * Replace the fetch logic inside these functions to point to your actual backend API.
- */
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
-// Simulating some mock data to show before the API is hooked up
-let mockLeaderboard: LeaderboardEntry[] = [
-  { id: '1', playerName: 'MarioPro', score: 450, date: new Date().toISOString() },
-  { id: '2', playerName: 'LuigiFan', score: 320, date: new Date().toISOString() },
-  { id: '3', playerName: 'PeachRules', score: 280, date: new Date().toISOString() },
-  { id: '4', playerName: 'Toad', score: 150, date: new Date().toISOString() },
-];
+const GAME_IDS: Record<string, string> = {
+  'mario': process.env.NEXT_PUBLIC_MARIO_GAME_ID || '6a75e32948da39ed1933ac59'
+};
 
 export async function fetchLeaderboard(gameId: string): Promise<LeaderboardEntry[]> {
-  // TODO: Replace with actual API call to fetch game-specific leaderboard
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([...mockLeaderboard].sort((a, b) => b.score - a.score));
-    }, 500);
-  });
+  try {
+    const actualGameId = GAME_IDS[gameId] || gameId;
+    const res = await fetch(`${API_BASE_URL}/leaderboard/${actualGameId}`);
+    if (!res.ok) throw new Error('Failed to fetch game leaderboard');
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      id: item.userId,
+      playerName: item.username,
+      score: item.finalScore,
+    }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 }
 
 export interface GlobalLeaderboardResponse {
@@ -35,61 +36,71 @@ export interface GlobalLeaderboardResponse {
   totalUsers: number;
 }
 
-// Simulating global leaderboard data
-let mockGlobalLeaderboard: LeaderboardEntry[] = Array.from({ length: 45 }).map((_, i) => ({
-  id: `user-${i}`,
-  playerName: `Player ${i + 1}`,
-  score: Math.floor(Math.random() * 5000),
-  date: new Date().toISOString()
-})).sort((a, b) => b.score - a.score);
-
 export async function fetchGlobalLeaderboard(page: number = 1, limit: number = 10): Promise<GlobalLeaderboardResponse> {
-  // TODO: Replace with actual API call to your Anwesha/TEDx backend
-  // const res = await fetch(`https://your-api.com/api/leaderboard?page=${page}&limit=${limit}`);
-  // return res.json();
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Mock pagination
-      const sorted = [...mockGlobalLeaderboard].sort((a, b) => b.score - a.score);
-      const startIndex = (page - 1) * limit;
-      const paginatedData = sorted.slice(startIndex, startIndex + limit);
-      
-      resolve({
-        data: paginatedData,
-        page,
-        limit,
-        totalPages: Math.ceil(sorted.length / limit),
-        totalUsers: sorted.length
-      });
-    }, 500); // Simulate network delay
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/leaderboard/global?limit=${limit}`);
+    if (!res.ok) throw new Error('Failed to fetch global leaderboard');
+    const json = await res.json();
+    const formattedData = json.data.map((item: any) => ({
+      id: item.userId,
+      playerName: item.username,
+      score: item.cumulativeScore,
+    }));
+    
+    // The backend doesn't seem to support pagination yet, so we mock the pagination metadata
+    return {
+      data: formattedData,
+      page,
+      limit,
+      totalPages: 1,
+      totalUsers: formattedData.length
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      data: [],
+      page,
+      limit,
+      totalPages: 0,
+      totalUsers: 0
+    };
+  }
 }
 
-export async function submitScore(gameId: string, playerName: string, score: number): Promise<boolean> {
-  // TODO: Replace with actual API call
-  // await fetch('https://your-api.com/api/leaderboard', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ gameId, playerName, score })
-  // });
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // In a real global leaderboard, you'd add this score to the user's existing total.
-      // For the mock, we'll just push a new entry or update if name exists.
-      const existing = mockGlobalLeaderboard.find(p => p.playerName === playerName);
-      if (existing) {
-        existing.score += score;
-      } else {
-        mockGlobalLeaderboard.push({
-          id: Math.random().toString(36).substr(2, 9),
-          playerName,
-          score,
-          date: new Date().toISOString()
-        });
+export async function registerUser(username: string): Promise<{ error?: string, data?: { userId: string; username: string } }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/identity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      return { error: json.error || 'Failed to register' };
+    }
+    return {
+      data: {
+        userId: json.userId,
+        username: json.username
       }
-      resolve(true);
-    }, 500);
-  });
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Network error occurred' };
+  }
+}
+
+export async function submitScore(gameId: string, userId: string, score: number): Promise<boolean> {
+  try {
+    const actualGameId = GAME_IDS[gameId] || gameId;
+    const res = await fetch(`${API_BASE_URL}/games/${actualGameId}/submit-stats`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, rawScore: score })
+    });
+    return res.ok;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
