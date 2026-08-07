@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta charset=utf-8 />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,700;0,900;1,300&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>Super Mario HTML5 Test</title>
+<link href="Content/style.css" rel="stylesheet" />
+</head>
+<body>
+<div id="game">
+    <div id="world"></div>
+    <div id="coinNumber" class="gauge">0</div>
+    <div id="coin" class="gaugeSprite"></div>
+    <div id="levelNumber" class="gauge">Level: 1 / 15</div>
+    <div id="liveNumber" class="gauge">0</div>
+    <div id="live" class="gaugeSprite"></div>
+
+    <!-- Move overlays inside #game so they scale with the canvas -->
+    <div id="start-screen">
+        <div class="start-content">
+            <h1><span class="ted-red">TEDx</span><span class="ted-white">IITPatna</span></h1>
+            <p class="tagline">Ideas worth spreading... and coins worth collecting!</p>
+            <div class="instructions card">
+                <h3>HOW TO PLAY</h3>
+                <p><strong>Desktop:</strong> Arrow Keys to move (DOWN to crouch), UP to jump, SPACE/SHIFT to fire.</p>
+                <p><strong>Mobile:</strong> Use the on-screen touch buttons to move, jump, and fire.</p>
+            </div>
+            <button id="start-btn">PLAY</button>
+        </div>
+    </div>
+
+    <div id="victory-screen" style="display: none;">
+        <div class="start-content">
+            <h1><span class="ted-red">YOU </span><span class="ted-white">WIN!</span></h1>
+            <p class="tagline">Thanks for playing!</p>
+            <button id="restart-btn" onclick="location.reload()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <div id="game-over-screen" style="display: none;">
+        <div class="start-content">
+            <div id="game-over-mario"></div>
+            <h1><span class="ted-red">GAME </span><span class="ted-white">OVER</span></h1>
+            <p class="tagline">Coins Collected: <span id="go-coins">0</span></p>
+            <p class="tagline">Level Reached: <span id="go-level">1</span></p>
+            <button id="restart-btn-go" onclick="location.reload()">PLAY AGAIN</button>
+        </div>
+    </div>
+</div>
+
+<div id="touch-controls">
+    <div id="dpad">
+        <div id="tc-up" class="tc-btn tc-dir">&#9650;</div>
+        <div id="tc-left" class="tc-btn tc-dir">&#9664;</div>
+        <div id="tc-down" class="tc-btn tc-dir">&#9660;</div>
+        <div id="tc-right" class="tc-btn tc-dir">&#9654;</div>
+    </div>
+    <div id="tc-jump" class="tc-btn tc-action">JUMP</div>
+    <div id="tc-fire" class="tc-btn tc-action">FIRE</div>
+</div>
+
+<div id="portrait-warning">
+    <div class="warning-text">Please rotate your device to landscape mode</div>
+</div>
+
+<audio id="bg-music" src="Content/audio/overworld.mp3" loop preload="auto"></audio>
+<audio id="gameover-music" src="Content/audio/wav files/smb_gameover.wav" preload="auto"></audio>
+
+<!-- Sound Effects -->
+<audio id="sound-jump-small" src="Content/audio/wav files/smb_jump-small.wav" preload="auto"></audio>
+<audio id="sound-jump-super" src="Content/audio/wav files/smb_jump-super.wav" preload="auto"></audio>
+<audio id="sound-mushroom" src="Content/audio/mushroom.wav" preload="auto"></audio>
+<audio id="sound-shoot" src="Content/audio/wav files/smb_fireball.wav" preload="auto"></audio>
+<audio id="sound-coin" src="Content/audio/wav files/smb_coin.wav" preload="auto"></audio>
+<audio id="sound-grow" src="Content/audio/wav files/smb_powerup.wav" preload="auto"></audio>
+<audio id="sound-enemy_die" src="Content/audio/enemy_die.wav" preload="auto"></audio>
+
+<!-- Side Music -->
+<audio id="music-die" src="Content/audio/wav files/smb_mariodie.wav" preload="auto"></audio>
+<audio id="music-success" src="Content/audio/wav files/smb_stage_clear.wav" preload="auto"></audio>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="Scripts/jQuery.js"><\/script>')</script>
+<script src="Scripts/testlevels.js"></script>
+<script src="Scripts/oop.js"></script>
+<script src="Scripts/keys.js"></script>
+<script src="Scripts/constants.js"></script>
+<script src="Scripts/main.js"></script>
+<script>
+    function resizeGame() {
+        var game = document.getElementById('game');
+        var scaleX = window.innerWidth / 640;
+        var scaleY = window.innerHeight / 480;
+        var scale = Math.min(scaleX, scaleY);
+        game.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    }
+    window.addEventListener('resize', resizeGame);
+    // Initial call
+    resizeGame();
+    // Another call shortly after load in case fonts/styles shift dimensions
+    setTimeout(resizeGame, 100);
+</script>
+</body>
+</html>
