@@ -4,13 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Maximize2, RotateCcw, Home } from "lucide-react";
 import { submitScore } from "../../../lib/api";
+import { useRouter } from "next/navigation";
 
 export default function MarioGamePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const router = useRouter();
   
-  
-
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [gameOverData, setGameOverData] = useState<{score: number, show: boolean} | null>(null);
 
   const toggleFullScreen = () => {
@@ -24,6 +25,16 @@ export default function MarioGamePage() {
       document.exitFullscreen();
     }
   };
+
+  useEffect(() => {
+    const userId = localStorage.getItem('tedx_userid');
+    if (!userId) {
+      // Redirect back if they haven't set a username
+      router.push('/games');
+    } else {
+      setIsAuthorized(true);
+    }
+  }, [router]);
 
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
@@ -47,6 +58,14 @@ export default function MarioGamePage() {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+        <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <motion.div

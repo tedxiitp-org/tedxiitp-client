@@ -15,7 +15,7 @@ const games = [
   {
     id: "mario",
     title: "Super Mario",
-    description: "Beyond the known kingdom, adventure calls — jump into the unmapped.",
+    description: "Beyond the known kingdom, adventure calls - jump into the unmapped.",
     thumbnail: "/mario-thumbnail.png", // User needs to save the image here
     href: "/games/mario",
     active: true,
@@ -100,7 +100,7 @@ export default function GamesPage() {
       className="flex flex-col items-center justify-start min-h-screen py-12 px-4 md:px-8"
     >
       <h1 className="text-4xl md:text-6xl font-bold mb-4 font-[family-name:var(--font-molend)] text-white tracking-wider text-center">
-        TED<span className="text-[0.75em] lowercase">x</span><span className="text-red-600">IITPatna</span> Games
+        TED<span className="text-[0.75em] lowercase">x</span><span className="text-red-600">IIT Patna</span> Games
       </h1>
       <p className="text-lg md:text-xl text-gray-400 max-w-2xl text-center mb-8 font-[family-name:var(--font-inter)]">
         Somewhere past the edge of the known world, adventure awaits. Select a game below and step into the unmapped
@@ -213,8 +213,7 @@ export default function GamesPage() {
                   Enter Player ID
                 </h3>
                 <p className="text-gray-400 font-[family-name:var(--font-inter)] text-sm">
-                  Forge a unique explorer's mark to chart your high scores on the global leaderboard.
-                </p>
+                  Create your leaderboard identity to record and track your scores.                </p>
               </div>
 
               <form onSubmit={handleUsernameSubmit} className="space-y-6">
@@ -226,7 +225,7 @@ export default function GamesPage() {
                       setUsernameInput(e.target.value);
                       setAuthError(""); // Clear error on typing
                     }}
-                    placeholder="E.g., Player π"
+                    placeholder="Username"
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 text-white font-[family-name:var(--font-inter)] focus:outline-none focus:border-red-500 transition-colors placeholder:text-gray-600"
                     autoFocus
                     maxLength={20}
@@ -302,14 +301,7 @@ function GameCard({ game }: { game: typeof games[0] }) {
         <p className="text-sm text-gray-400 font-[family-name:var(--font-inter)] line-clamp-3 leading-relaxed">
           {game.description}
         </p>
-        {game.active && (
-          <div className="mt-auto pt-6 flex items-center text-red-500 text-sm font-bold uppercase tracking-widest font-[family-name:var(--font-inter)] opacity-70 group-hover/card:opacity-100 transition-opacity">
-            <span className="relative">
-              Launch Game
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 group-hover/card:w-full transition-all duration-300"></span>
-            </span>
-          </div>
-        )}
+
       </div>
     </div>
   );

@@ -74,11 +74,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/note_bg.png');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/note_bg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: 1;
   z-index: -1;
 }
 

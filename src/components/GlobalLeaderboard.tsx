@@ -74,8 +74,16 @@ export default function GlobalLeaderboard() {
           )}
 
           {!data || data.data.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-500 font-[family-name:var(--font-space)] tracking-widest text-sm uppercase">
-              No records found.
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 z-0">
+              <div className="w-16 h-16 mb-4 rounded-full border border-red-600/20 flex items-center justify-center bg-red-600/5 shadow-[0_0_15px_rgba(220,38,38,0.05)]">
+                <Trophy className="w-8 h-8 text-gray-600" />
+              </div>
+              <span className="text-gray-400 font-[family-name:var(--font-space)] tracking-widest text-sm uppercase font-bold">
+                No records found.
+              </span>
+              <span className="text-gray-600 font-[family-name:var(--font-inter)] text-xs mt-2">
+                Be the first to claim a spot on the leaderboard!
+              </span>
             </div>
           ) : (
             <div className="flex flex-col">
