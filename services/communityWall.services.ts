@@ -28,7 +28,7 @@ const unwrapNote = (payload: unknown): CommunityWallNoteBackend => {
 };
 
 export const getCommunityWallNotes = async (sort: "new" | "top" = "new"): Promise<CommunityWallNoteBackend[]> => {
-    const res = await api.get(`/api/community-wall?sort=${sort}`);
+    const res = await api.get(`/community-wall?sort=${sort}`);
     return unwrapNotes(res.data);
 };
 
@@ -38,16 +38,16 @@ export const createCommunityWallNote = async (data: {
     color?: string;
     rotation?: number;
 }): Promise<CommunityWallNoteBackend> => {
-    const res = await api.post("/api/community-wall", data);
+    const res = await api.post("/community-wall", data);
     return unwrapNote(res.data);
 };
 
 export const likeCommunityWallNote = async (id: string): Promise<CommunityWallNoteBackend> => {
-    const res = await api.patch(`/api/community-wall/${id}/like`);
+    const res = await api.patch(`/community-wall/${id}/like`);
     return unwrapNote(res.data);
 };
 
 export const unlikeCommunityWallNote = async (id: string): Promise<CommunityWallNoteBackend> => {
-    const res = await api.patch(`/api/community-wall/${id}/unlike`);
+    const res = await api.patch(`/community-wall/${id}/unlike`);
     return unwrapNote(res.data);
 };
