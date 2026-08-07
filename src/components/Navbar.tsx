@@ -8,12 +8,13 @@ import { IoClose } from "react-icons/io5";
 
 const navLinks = [
     { label: "Home", href: "/" },
+    { label: "About Us", href: "/about" },
     { label: "Events", href: "/events" },
+    { label: "Speakers", href: "/speakers" },
     { label: "Pre-events", href: "/funfair" },
+    { label: "Games", href: "/games" },
     { label: "Past Editions", href: "/past-editions" },
     { label: "Sponsors", href: "/sponsors" },
-    { label: "About Us", href: "/about" },
-    { label: "Speakers", href: "/speakers" },
 ];
 
 const socialLinks = [
@@ -53,7 +54,7 @@ export default function Navbar() {
             document.body.style.left = "0";
             document.body.style.right = "0";
             document.body.style.overflow = "hidden";
-            if (window.innerWidth >= 768 && scrollbarWidth > 0 && scrollbarWidth < 100) { 
+            if (window.innerWidth >= 768 && scrollbarWidth > 0 && scrollbarWidth < 100) {
                 document.body.style.paddingRight = `${scrollbarWidth}px`;
             }
         } else {
@@ -83,7 +84,7 @@ export default function Navbar() {
             <header className={`sticky top-0 z-40 w-full h-16 md:h-20 flex items-center justify-between px-4 sm:px-6 md:px-8 py-2 md:py-3 overflow-hidden transition-all duration-500 ${open ? "bg-transparent" : scrolled ? "bg-black/40 backdrop-blur-md" : "bg-black"}`}>
                 <div className="flex items-center h-full">
                     <Link href="/" className="flex items-center h-full">
-                        <Image src="/logo png.svg" alt="TEDxIITPatna" width={527} height={108} className="h-full w-auto object-contain" style={{ width: "auto" }} priority />
+                        <Image src="/logo png.svg" alt="TEDxIIT Patna" width={527} height={108} className="h-full w-auto object-contain" style={{ width: "auto" }} priority />
                     </Link>
                 </div>
 
@@ -122,7 +123,7 @@ export default function Navbar() {
                     className={`hidden md:flex flex-col justify-end gap-4 w-1/2 transition-all duration-700 ease-out transform ${open ? "translate-x-0 opacity-100 delay-150" : "-translate-x-8 opacity-0"}`}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <Image src="/logo png.svg" alt="TEDxIITPatna" width={200} height={45} className="-ml-5" />
+                    <Image src="/logo png.svg" alt="TEDxIIT Patna" width={200} height={45} className="-ml-5" />
                     <div className="mt-8">
                         <p className="text-red-500 font-['Inter'] text-xl font-bold mb-1">Contact Us</p>
                         <Link href="mailto:tedx@iitp.ac.in" className="flex items-center gap-2 text-white font-['Inter'] text-sm hover:text-red-500 transition-colors">
@@ -143,7 +144,7 @@ export default function Navbar() {
 
                 {/* Main Content Container (Right Side / Full Mobile) */}
                 <div className="flex flex-col justify-between w-full md:w-1/2 h-full min-h-0 overflow-y-auto no-scrollbar" onClick={(e) => e.stopPropagation()}>
-                    
+
                     {/* Top Navigation Links */}
                     <div className="flex flex-col justify-start md:justify-center gap-0 shrink-0 py-2">
                         {navLinks.map(({ label, href }, index) => {

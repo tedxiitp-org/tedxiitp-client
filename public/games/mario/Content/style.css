@@ -1,0 +1,277 @@
+@font-face {
+   font-family: 'SMB';
+   src: local('Super Mario Bros.'),
+        url('fonts/Super Mario Bros.ttf') format('truetype');
+   font-style: normal;
+}
+
+body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background-color: #000; overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+#game {
+	height: 480px; width: 640px; position: absolute; left: 50%; top: 50%;
+	transform: translate(-50%, -50%);
+	transform-origin: center;
+	border: 1px solid #ccc; overflow: hidden;
+	background-color: #5c94fc; /* Mario sky color */
+}
+#world { 
+	margin: 0; padding: 0; height: 100%; width: 100%; position: absolute;
+	bottom: 0; left: 0; z-index: 0;
+}
+.gauge {
+	margin: 0; padding: 0; height: 50px; width: 70px; text-align: right; font-size: 2em;
+	font-weight: bold; position: absolute; top: 17px; right: 52px; z-index: 1000;
+	position: absolute; font-family: 'SMB';
+}
+.gaugeSprite {
+	margin: 0; padding: 0; z-index: 1000; position: absolute;
+}
+#coinNumber {
+	left: 0;
+}
+#levelNumber {
+	left: 50%;
+	transform: translateX(-50%);
+	width: auto;
+	text-align: center;
+	font-size: 1.5em;
+}
+#liveNumber {
+	right: 52px;
+}
+#coin {
+	height: 32px; width: 32px; background-image : url(mario-objects.png);
+	background-position: 0 0; top: 15px; left: 70px;
+}
+#live {
+	height: 40px; width: 40px; background-image : url(mario-sprites.png);
+	background-position : 0 -430px; top: 12px; right: 8px;
+}
+.figure {
+	margin: 0; padding: 0; z-index: 99; position: absolute;
+}
+.matter {
+	margin: 0; padding: 0; z-index: 95; position: absolute; width: 32px; height: 32px;
+}
+
+/* Mobile Responsive Controls */
+#touch-controls {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+    pointer-events: none; /* Let clicks pass through where there are no buttons */
+}
+.tc-btn {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    pointer-events: auto; /* Buttons are clickable */
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    user-select: none;
+    white-space: nowrap;
+}
+.tc-btn:active, .tc-btn.active {
+    background: rgba(255, 255, 255, 0.7);
+}
+#dpad {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    width: 135px;
+    height: 135px;
+    pointer-events: none;
+}
+.tc-btn.tc-dir {
+    width: 45px; height: 45px;
+    line-height: 41px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+#tc-up { top: 0; left: 45px; }
+#tc-left { top: 45px; left: 0; }
+#tc-down { top: 90px; left: 45px; }
+#tc-right { top: 45px; left: 90px; }
+
+#tc-jump, #tc-fire {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    line-height: 56px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+#tc-jump {
+    bottom: 30px;
+    right: 30px;
+}
+#tc-fire {
+    bottom: 110px;
+    right: 30px;
+    display: none; /* Hidden by default */
+}
+#tc-jump:active, #tc-jump.active,
+#tc-fire:active, #tc-fire.active {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+#portrait-warning {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #000;
+    color: #fff;
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    padding: 20px;
+}
+
+@media (pointer: coarse) {
+    #touch-controls {
+        display: block; /* Show touch controls on devices with touch */
+    }
+}
+@media (orientation: portrait) and (max-width: 768px) {
+    #portrait-warning {
+        display: flex;
+    }
+}
+
+#start-screen, #victory-screen, #game-over-screen {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+.start-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 500px;
+    width: 100%;
+    animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+#start-screen h1, #victory-screen h1, #game-over-screen h1 {
+    font-family: 'SMB', sans-serif;
+    font-size: 32px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+.ted-red { color: #e62b1e; }
+.ted-white { color: #ffffff; }
+
+.tagline {
+    font-size: 14px;
+    color: #a0a0a0;
+    font-style: italic;
+    margin: 0 0 20px 0;
+    font-weight: 300;
+}
+.instructions.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.instructions.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(230, 43, 30, 0.3);
+}
+.instructions h3 { 
+    margin: 0 0 10px 0; 
+    color: #e62b1e; 
+    font-family: 'SMB', sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.instructions p {
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 8px 0;
+    color: #ddd;
+}
+.instructions strong {
+    color: #fff;
+    font-weight: 700;
+}
+#start-btn, #restart-btn, #restart-btn-go {
+    font-family: 'SMB', sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #e62b1e 0%, #b81f14 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(230, 43, 30, 0.3);
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    text-transform: uppercase;
+}
+#start-btn:hover, #restart-btn:hover, #restart-btn-go:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(230, 43, 30, 0.5);
+    background: linear-gradient(135deg, #f23729 0%, #c22116 100%);
+}
+#start-btn:active, #restart-btn:active, #restart-btn-go:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(230, 43, 30, 0.4);
+}
+
+#game-over-mario {
+    width: 80px;
+    height: 80px;
+    background-image: url(mario-sprites.png);
+    background-position: -81px -324px;
+    margin-bottom: 20px;
+    transform: scale(2);
+    image-rendering: pixelated;
+}

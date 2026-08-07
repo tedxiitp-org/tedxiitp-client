@@ -27,7 +27,7 @@ interface BodyState {
 function TileContent({ id }: { id: string }) {
     switch (id) {
         case "logo":
-            return <Image src="/logo png.svg" alt="TEDxIITPatna" width={527} height={108} className="w-full h-full object-contain" />;
+            return <Image src="/logo png.svg" alt="TEDxIIT Patna" width={527} height={108} className="w-full h-full object-contain" />;
         case "follow-us":
             return <span className="font-['Inter'] text-lg sm:text-xl lg:text-2xl font-bold text-red-600">Follow us</span>;
         case "ig": return <FaInstagram className="text-xl lg:text-3xl text-black" />;
@@ -103,7 +103,7 @@ function TileContent({ id }: { id: string }) {
                     <span>Refund Policy</span>
                 </div>
             );
-        case "copyright": return <span className="font-['Inter'] text-[10px] sm:text-xs lg:text-sm font-normal text-white">© 2026 TEDxIITPatna. All rights reserved.</span>;
+        case "copyright": return <span className="font-['Inter'] text-[10px] sm:text-xs lg:text-sm font-normal text-white">© 2026 TEDxIIT Patna. All rights reserved.</span>;
         case "license": return <span className="font-['Inter'] text-[10px] sm:text-xs lg:text-sm font-medium text-white">*This Independent TEDx Event Is Operated Under License From TED.</span>;
         default: return null;
     }
@@ -119,7 +119,7 @@ function GhostLayout({ itemRefs }: { itemRefs: React.MutableRefObject<Map<string
             {/* Left Column */}
             <div className="flex flex-col gap-3 lg:gap-4 w-full lg:w-auto items-center lg:items-start text-center lg:text-left shrink-0">
                 <div ref={setRef("logo")} className="w-56 sm:w-72 lg:w-[384px]">
-                    <Image src="/logo png.svg" alt="TEDxIITPatna" width={527} height={108} className="w-full h-auto object-contain" />
+                    <Image src="/logo png.svg" alt="TEDxIIT Patna" width={527} height={108} className="w-full h-auto object-contain" />
                 </div>
                 <div className="flex flex-col gap-2 lg:gap-3 mt-2 lg:mt-6 items-center lg:items-start">
                     <Link href={"https://www.ted.com/"} ref={setRef("ted-website")} className="w-fit"><span className="font-['Inter'] text-sm sm:text-base lg:text-lg text-white hover:text-red-500 transition-colors duration-300">TED Website</span></Link>
@@ -140,7 +140,7 @@ function GhostLayout({ itemRefs }: { itemRefs: React.MutableRefObject<Map<string
                     <Link href={"https://www.instagram.com/tedxiitpatna/"} ref={setRef("ig")} className="size-9 sm:size-10 bg-white rounded flex items-center justify-center text-black text-xl lg:text-3xl"><FaInstagram className="text-black" /></Link>
                     <Link href={"https://www.linkedin.com/company/tedxiitpatna/posts/?feedView=all"} ref={setRef("li")} className="size-9 sm:size-10 bg-white rounded flex items-center justify-center text-black text-xl lg:text-3xl"><FaLinkedinIn className="text-black" /></Link>
                     <Link href={"https://www.facebook.com/tedxiitpatna/"} ref={setRef("fb")} className="size-9 sm:size-10 bg-white rounded flex items-center justify-center text-black text-xl lg:text-3xl"><FaFacebookF className="text-black" /></Link>
-                    <Link href={"https://x.com/TEDxIITPatna"} ref={setRef("tw")} className="size-9 sm:size-10 bg-white rounded flex items-center justify-center text-black text-xl lg:text-3xl"><FaXTwitter className="text-black" /></Link>
+                    <Link href={"https://x.com/TEDxIIT Patna"} ref={setRef("tw")} className="size-9 sm:size-10 bg-white rounded flex items-center justify-center text-black text-xl lg:text-3xl"><FaXTwitter className="text-black" /></Link>
                 </div>
                 <div className="w-full max-w-xs h-[1px] bg-red-800/30 my-1" />
                 <div ref={setRef("contact-us")}><span className="font-['Inter'] text-lg sm:text-xl lg:text-2xl font-bold text-white">Contact Us</span></div>
