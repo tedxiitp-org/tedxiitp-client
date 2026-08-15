@@ -17,7 +17,10 @@ import { cn } from "@/lib/utils";
 import localFont from "next/font/local";
 
 export const metadata: Metadata = {
-  title: "TEDxIIT Patna | Ideas Worth Spreading",
+  title: {
+    default: "TEDxIIT Patna | Ideas Worth Spreading",
+    template: "%s | TEDxIIT Patna",
+  },
   description:
     "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
   keywords: [
@@ -33,10 +36,26 @@ export const metadata: Metadata = {
     "IITP Events",
   ],
   authors: [{ name: "TEDxIIT Patna Team" }],
-  // Fixed: Correct domain URL
+  creator: "TEDxIIT Patna Team",
+  publisher: "TEDxIIT Patna",
   metadataBase: new URL("https://tedxiitpatna.iitp.ac.in"),
+  alternates: {
+    canonical: "https://tedxiitpatna.iitp.ac.in",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   openGraph: {
     title: "TEDxIIT Patna | Ideas Worth Spreading",
@@ -46,8 +65,6 @@ export const metadata: Metadata = {
     siteName: "TEDxIIT Patna",
     images: [
       {
-        // Recommended: Use a .png or .jpg image in /public (e.g., /og-image.png)
-        // because social crawlers & search engines do not support .svg for previews.
         url: "/og-image.png",
         width: 1200,
         height: 630,
@@ -138,6 +155,22 @@ export default function RootLayout({ children }: Props) {
         lemonMilk.variable
       )}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "TEDxIIT Patna",
+              "alternateName": ["TEDxIITPatna", "TEDx IIT Patna"],
+              "url": "https://tedxiitpatna.iitp.ac.in",
+              "description":
+                "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
+            }),
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className="bg-[#0a0a0a] bg-[url('/bg1.png')] bg-repeat bg-top bg-left text-white min-h-screen flex flex-col"
