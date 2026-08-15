@@ -53,10 +53,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/favicon.ico",
-  },
   openGraph: {
     title: "TEDxIIT Patna | Ideas Worth Spreading",
     description:
