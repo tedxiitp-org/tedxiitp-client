@@ -147,7 +147,7 @@ export default function ScanPage() {
                   onChange={(e) => setManualToken(e.target.value)}
                   placeholder="Paste the QR token (JWT) here"
                   rows={4}
-                  className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 font-mono text-xs outline-none focus:border-red-500"
+                  className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 font-mono text-xs outline-none focus:border-red-500"
                 />
                 <button
                   type="submit"

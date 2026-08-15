@@ -177,7 +177,7 @@ function GeneratePanel() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="attendee@email.com"
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           />
           <p className="mt-1 text-xs text-neutral-600">
             One ticket per email per session. The QR is emailed automatically.
@@ -191,7 +191,7 @@ function GeneratePanel() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Used to personalise the email"
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
@@ -203,7 +203,7 @@ function GeneratePanel() {
             value={transactionId}
             onChange={(e) => setTransactionId(e.target.value)}
             placeholder="e.g. TXN123456"
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
@@ -211,7 +211,7 @@ function GeneratePanel() {
           <select
             value={session}
             onChange={(e) => setSession(e.target.value as Session)}
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           >
             <option value="SESSION_1">Session 1</option>
             <option value="SESSION_2">Session 2</option>
@@ -338,7 +338,7 @@ function RevokePanel() {
             placeholder={
               mode === "email" ? "attendee@email.com" : "TEDXIITP-26-81-0001"
             }
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 font-mono text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 font-mono text-sm outline-none focus:border-red-500"
           />
         </div>
 
@@ -576,7 +576,7 @@ function BulkPanel() {
           <select
             value={session}
             onChange={(e) => setSession(e.target.value as Session)}
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           >
             <option value="SESSION_1">Session 1</option>
             <option value="SESSION_2">Session 2</option>
@@ -787,7 +787,7 @@ function AttendeeListPanel() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by name or email…"
-        className="mb-4 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+        className="mb-4 w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
       />
 
       {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
@@ -940,7 +940,7 @@ function VolunteersPanel() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="volunteer@email.com"
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
@@ -953,7 +953,7 @@ function VolunteersPanel() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <button

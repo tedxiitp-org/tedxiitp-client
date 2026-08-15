@@ -52,7 +52,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@tedx.com"
               suppressHydrationWarning
-              className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+              className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
             />
           </div>
 
@@ -66,7 +66,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
+              className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
             />
           </div>
 
