@@ -13,6 +13,7 @@ body, html {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    -webkit-touch-callout: none;
 }
 #game {
 	height: 480px; width: 640px; position: absolute; left: 50%; top: 50%;

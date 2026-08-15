@@ -4,13 +4,25 @@ import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
 import "./globals.css";
-import { Bebas_Neue, Cormorant, Space_Grotesk, Inter, Source_Sans_3, Albert_Sans, Geist } from "next/font/google";
+import { 
+  Bebas_Neue, 
+  Cormorant, 
+  Space_Grotesk, 
+  Inter, 
+  Source_Sans_3, 
+  Albert_Sans, 
+  Geist 
+} from "next/font/google";
 import { cn } from "@/lib/utils";
 import localFont from "next/font/local";
 
 export const metadata: Metadata = {
-  title: "TEDxIIT Patna | Ideas Worth Spreading",
-  description: "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
+  title: {
+    default: "TEDxIIT Patna | Ideas Worth Spreading",
+    template: "%s | TEDxIIT Patna",
+  },
+  description:
+    "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
   keywords: [
     "TEDx",
     "IIT Patna",
@@ -21,24 +33,42 @@ export const metadata: Metadata = {
     "Ideas Worth Spreading",
     "Talks",
     "Speakers",
-    "IITP Events"
+    "IITP Events",
   ],
   authors: [{ name: "TEDxIIT Patna Team" }],
-  metadataBase: new URL("https://tedxiitp.iitp.ac.in"),
+  creator: "TEDxIIT Patna Team",
+  publisher: "TEDxIIT Patna",
+  metadataBase: new URL("https://tedxiitpatna.iitp.ac.in"),
+  alternates: {
+    canonical: "https://tedxiitpatna.iitp.ac.in",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   openGraph: {
     title: "TEDxIIT Patna | Ideas Worth Spreading",
-    description: "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
-    url: "https://tedxiitp.iitp.ac.in",
+    description:
+      "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
+    url: "https://tedxiitpatna.iitp.ac.in",
     siteName: "TEDxIIT Patna",
     images: [
       {
-        url: "/logo.svg",
-        width: 800,
-        height: 600,
-        alt: "TEDxIIT Patna Logo",
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "TEDxIIT Patna Banner",
       },
     ],
     locale: "en_US",
@@ -47,8 +77,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "TEDxIIT Patna | Ideas Worth Spreading",
-    description: "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
-    images: ["/logo.svg"],
+    description:
+      "Official website of TEDxIIT Patna. Exploring ideas, innovation, and inspirational talks at IIT Patna.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -67,42 +98,29 @@ const molend = localFont({
   variable: "--font-molend",
 });
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
-interface Props {
-  readonly children: ReactNode;
-}
-
-
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const bebasNeue = Bebas_Neue({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-bebas',
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-bebas",
 });
 
 const cormorant = Cormorant({
-  subsets: ['latin'],
-  variable: '--font-cormorant',
+  subsets: ["latin"],
+  variable: "--font-cormorant",
 });
 
 const spaceGrotesk = Space_Grotesk({
-  weight: [
-    "300",
-    "400",
-    "500",
-    "600",
-    "700"
-  ],
-  subsets: ['latin'],
-  variable: '--font-space',
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-space",
 });
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
-
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
@@ -116,6 +134,10 @@ const albertSans = Albert_Sans({
   variable: "--font-albert-sans",
 });
 
+interface Props {
+  readonly children: ReactNode;
+}
+
 export default function RootLayout({ children }: Props) {
   return (
     <html
@@ -125,16 +147,40 @@ export default function RootLayout({ children }: Props) {
         bebasNeue.variable,
         cormorant.variable,
         spaceGrotesk.variable,
-        inter.variable,       // Fix: added .variable
-        molend.variable,      // This now registers properly
-        sourceSans.variable,  // Fix: added .variable
-        albertSans.variable,  // Fix: added .variable
+        inter.variable,
+        molend.variable,
+        sourceSans.variable,
+        albertSans.variable,
         geist.variable,
         lemonMilk.variable
       )}
     >
-      <body suppressHydrationWarning className={`bg-[#0a0a0a] bg-[url('/bg1.png')] bg-repeat bg-top bg-left text-white min-h-screen flex flex-col`}>
-        <NextTopLoader color="#DC2626" height={3} showSpinner={false} shadow="0 0 10px #DC2626,0 0 5px #DC2626" />
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "TEDxIIT Patna",
+              "alternateName": ["TEDxIITPatna", "TEDx IIT Patna"],
+              "url": "https://tedxiitpatna.iitp.ac.in",
+              "description":
+                "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
+            }),
+          }}
+        />
+      </head>
+      <body
+        suppressHydrationWarning
+        className="bg-[#0a0a0a] bg-[url('/bg1.png')] bg-repeat bg-top bg-left text-white min-h-screen flex flex-col"
+      >
+        <NextTopLoader
+          color="#DC2626"
+          height={3}
+          showSpinner={false}
+          shadow="0 0 10px #DC2626,0 0 5px #DC2626"
+        />
         {/* Navigation Bar */}
         <Navbar />
         {/* Page Content */}
