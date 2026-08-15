@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Header from "@/src/components/qr/Header";
-import { useRequireAuth } from "@/src/lib/qr/auth";
+import Header from "@/components/Header";
+import { useRequireAuth } from "@/lib/auth";
 import {
   generateTicket,
   getAttendance,
@@ -23,8 +23,9 @@ import {
   type Attendee,
   type AttendeeSummary,
   exportAttendeesCsv,
-} from "@/src/lib/qr/api";
-import { parseAttendeeCsv, type ParsedAttendee } from "@/src/lib/qr/csv";
+  getBulkJobStatus,
+} from "@/lib/api";
+import { parseAttendeeCsv, type ParsedAttendee } from "@/lib/csv";
 
 export default function AdminPage() {
   const { ready } = useRequireAuth(["ADMIN"]);
@@ -177,7 +178,7 @@ function GeneratePanel() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="attendee@email.com"
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           />
           <p className="mt-1 text-xs text-neutral-600">
             One ticket per email per session. The QR is emailed automatically.
@@ -191,7 +192,7 @@ function GeneratePanel() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Used to personalise the email"
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
@@ -203,7 +204,7 @@ function GeneratePanel() {
             value={transactionId}
             onChange={(e) => setTransactionId(e.target.value)}
             placeholder="e.g. TXN123456"
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
@@ -211,7 +212,7 @@ function GeneratePanel() {
           <select
             value={session}
             onChange={(e) => setSession(e.target.value as Session)}
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           >
             <option value="SESSION_1">Session 1</option>
             <option value="SESSION_2">Session 2</option>
@@ -338,7 +339,7 @@ function RevokePanel() {
             placeholder={
               mode === "email" ? "attendee@email.com" : "TEDXIITP-26-81-0001"
             }
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 font-mono text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 font-mono text-sm outline-none focus:border-red-500"
           />
         </div>
 
@@ -399,6 +400,43 @@ function BulkPanel() {
   const [busy, setBusy] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
+  const [activeJobId, setActiveJobId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!activeJobId) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let pollCount = 0;
+
+    const poll = async () => {
+      try {
+        const res = await getBulkJobStatus(activeJobId);
+        const data = res.data;
+        
+        applyGenerateResults(data.items);
+        setSummary(`Job ${data.status}: Processed ${data.processedRecords} of ${data.totalRecords}`);
+
+        if (data.status === 'COMPLETED' || data.status === 'FAILED') {
+          setActiveJobId(null);
+          setBusy(false);
+          return;
+        }
+
+        // Backoff: 2s for first 15 polls (30s), then 5s
+        pollCount++;
+        const nextInterval = pollCount <= 15 ? 2000 : 5000;
+        timeoutId = setTimeout(poll, nextInterval);
+      } catch (err) {
+        console.error("Polling error:", err);
+        setSummary("Lost connection to job status.");
+        setActiveJobId(null);
+        setBusy(false);
+      }
+    };
+
+    timeoutId = setTimeout(poll, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [activeJobId]);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -459,7 +497,7 @@ function BulkPanel() {
   };
 
   const generateAll = async () => {
-    if (rows.length === 0 || busy) return;
+    if (rows.length === 0 || busy || activeJobId) return;
     setBusy(true);
     setSummary(null);
     setRows((prev) => prev.map((r) => ({ ...r, status: "working" as const })));
@@ -468,8 +506,8 @@ function BulkPanel() {
         rows.map((r) => ({ email: r.email, transactionId: r.transactionId, name: r.name })),
         session
       );
-      applyGenerateResults(res.data);
       setSummary(res.message);
+      setActiveJobId(res.jobId);
     } catch (err) {
       setSummary((err as ApiError).message);
       setRows((prev) =>
@@ -477,7 +515,6 @@ function BulkPanel() {
           r.status === "working" ? { ...r, status: "pending" } : r
         )
       );
-    } finally {
       setBusy(false);
     }
   };
@@ -576,7 +613,7 @@ function BulkPanel() {
           <select
             value={session}
             onChange={(e) => setSession(e.target.value as Session)}
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           >
             <option value="SESSION_1">Session 1</option>
             <option value="SESSION_2">Session 2</option>
@@ -787,7 +824,7 @@ function AttendeeListPanel() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by name or email…"
-        className="mb-4 w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+        className="mb-4 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
       />
 
       {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
@@ -940,7 +977,7 @@ function VolunteersPanel() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="volunteer@email.com"
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
@@ -953,7 +990,7 @@ function VolunteersPanel() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full rounded-md border border-neutral-700 bg-black text-white px-3 py-2 text-sm outline-none focus:border-red-500"
+            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
           />
         </div>
         <button
