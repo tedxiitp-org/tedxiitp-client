@@ -437,26 +437,22 @@ function BulkPanel() {
     return () => clearTimeout(timeoutId);
   }, [activeJobId]);
 
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = ""; // allow re-uploading the same file name
-    if (!file) return;
+  const processCsvText = async (text: string, sourceName: string) => {
     setParseError(null);
     setSummary(null);
     try {
-      const text = await file.text();
       const parsed = parseAttendeeCsv(text);
       if (parsed.length === 0) {
         setParseError(
           "No valid rows found. Expected 'email', 'transaction id', and 'session' columns."
         );
         setRows([]);
-        setFileName(file.name);
+        setFileName(sourceName);
         return;
       }
       
       const newRows = parsed.map((p) => ({ ...p, status: "pending" as const, message: (p as any).message }));
-      setFileName(file.name);
+      setFileName(sourceName);
       
       try {
         setSummary("Checking for existing tickets...");
@@ -492,7 +488,39 @@ function BulkPanel() {
         setBusy(false);
       }
     } catch {
+      setParseError("Could not parse that file data.");
+    }
+  };
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-uploading the same file name
+    if (!file) return;
+    try {
+      const text = await file.text();
+      await processCsvText(text, file.name);
+    } catch {
       setParseError("Could not read that file.");
+    }
+  };
+
+  const handleSync = async () => {
+    setParseError(null);
+    setSummary("Syncing with Google Sheet...");
+    setBusy(true);
+    try {
+      const response = await fetch('/api/sync-sheet');
+      if (!response.ok) {
+        throw new Error("Failed to fetch sheet data");
+      }
+      const text = await response.text();
+      await processCsvText(text, "Google Sheet Sync");
+    } catch (err: any) {
+      setParseError(err.message || "Could not sync Google Sheet.");
+      setSummary(null);
+    } finally {
+      if (summary === "Syncing with Google Sheet...") setSummary(null);
+      setBusy(false);
     }
   };
 
@@ -641,7 +669,7 @@ function BulkPanel() {
         )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+      <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
         <div>
           <label className="mb-1 block text-sm text-neutral-300">
             Upload CSV
@@ -653,6 +681,14 @@ function BulkPanel() {
             className="block w-full text-sm text-neutral-400 file:mr-3 file:rounded-md file:border file:border-neutral-700 file:bg-neutral-800 file:px-3 file:py-1.5 file:text-sm file:text-neutral-200 hover:file:bg-neutral-700"
           />
         </div>
+        <div className="text-sm text-neutral-500 pb-1.5 px-2">or</div>
+        <button
+          onClick={handleSync}
+          disabled={busy}
+          className="rounded-md border border-neutral-700 bg-neutral-800 px-4 py-1.5 text-sm font-medium transition hover:bg-neutral-700 disabled:opacity-50 h-[38px]"
+        >
+          {busy ? "Syncing..." : "Sync Google Sheet"}
+        </button>
       </div>
       <p className="mt-2 text-xs text-neutral-600">
         CSV needs an <span className="font-mono">email</span>, <span className="font-mono">transaction id</span>, and <span className="font-mono">Select Session(s)</span> column; an optional{" "}
