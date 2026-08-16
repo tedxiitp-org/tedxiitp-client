@@ -97,12 +97,10 @@ export interface BulkAttendee {
   email: string;
   transactionId: string;
   name?: string;
-  session: Session | "UNRECOGNIZED";
 }
 
 export interface BulkGenerateResult {
   email: string;
-  session: string;
   status: "generated" | "duplicate" | "error";
   ticketId?: string;
   emailSent?: boolean;
@@ -110,52 +108,16 @@ export interface BulkGenerateResult {
 }
 
 export function generateTicketsBulk(
-  attendees: BulkAttendee[]
+  attendees: BulkAttendee[],
+  session: Session
 ) {
   return request<{
     success: boolean;
     message: string;
-    jobId: string;
+    data: BulkGenerateResult[];
   }>("/api/qr/generate-bulk", {
     method: "POST",
-    body: JSON.stringify({ attendees }),
-  });
-}
-
-export interface CheckDuplicatePayload {
-  email: string;
-  transactionId: string;
-  session: Session | "UNRECOGNIZED";
-}
-
-export interface CheckDuplicateResponse {
-  email: string;
-  session: string;
-  exists: boolean;
-  reason?: string;
-}
-
-export function checkDuplicates(items: CheckDuplicatePayload[]) {
-  return request<{ success: boolean; data: CheckDuplicateResponse[] }>(
-    "/api/qr/admin/ticket/check-duplicates",
-    { method: "POST", body: JSON.stringify({ items }) }
-  );
-}
-
-export interface BulkJobStatusResponse {
-  jobId: string;
-  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-  totalRecords: number;
-  processedRecords: number;
-  items: BulkGenerateResult[];
-}
-
-export function getBulkJobStatus(jobId: string) {
-  return request<{
-    success: boolean;
-    data: BulkJobStatusResponse;
-  }>(`/api/qr/bulk-status/${jobId}`, {
-    method: "GET",
+    body: JSON.stringify({ attendees, session }),
   });
 }
 
@@ -325,32 +287,4 @@ export async function validateScan(
   }
 
   return body as ValidationResult;
-}
-
-// ---- Games ----
-export interface LeaderboardEntry {
-  id: string;
-  playerName: string;
-  score: number;
-}
-
-export interface GlobalLeaderboardResponse {
-  data: LeaderboardEntry[];
-  totalPages: number;
-}
-
-export async function registerUser(username: string): Promise<any> {
-  return request("/api/games/register", { method: "POST", body: JSON.stringify({ username }) }).catch(() => ({ success: true }));
-}
-
-export async function submitScore(gameId: string, userId: string, score: number): Promise<any> {
-  return request(`/api/v1/games/${gameId}/submit-stats`, { method: "POST", body: JSON.stringify({ userId, score }) }).catch(() => ({ success: true }));
-}
-
-export async function fetchLeaderboard(gameId: string): Promise<LeaderboardEntry[]> {
-  return request<LeaderboardEntry[]>("/api/v1/leaderboard/" + gameId).catch(() => []);
-}
-
-export async function fetchGlobalLeaderboard(page: number, limit: number): Promise<GlobalLeaderboardResponse> {
-  return request<GlobalLeaderboardResponse>(`/api/v1/leaderboard/global?page=${page}&limit=${limit}`).catch(() => ({ data: [], totalPages: 1 }));
 }
