@@ -396,7 +396,6 @@ const STATUS_STYLES: Record<BulkRowStatus, string> = {
 function BulkPanel() {
   const [rows, setRows] = useState<BulkRow[]>([]);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [session, setSession] = useState<Session>("SESSION_1");
   const [busy, setBusy] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
@@ -449,30 +448,70 @@ function BulkPanel() {
       const parsed = parseAttendeeCsv(text);
       if (parsed.length === 0) {
         setParseError(
-          "No valid rows found. Expected 'email' and 'transaction id' columns."
+          "No valid rows found. Expected 'email', 'transaction id', and 'session' columns."
         );
         setRows([]);
         setFileName(file.name);
         return;
       }
-      setRows(parsed.map((p) => ({ ...p, status: "pending" as const })));
+      
+      const newRows = parsed.map((p) => ({ ...p, status: "pending" as const, message: (p as any).message }));
       setFileName(file.name);
+      
+      try {
+        setSummary("Checking for existing tickets...");
+        setBusy(true);
+        const { checkDuplicates } = await import("@/lib/api");
+        const res = await checkDuplicates(newRows.map(r => ({ email: r.email, session: r.session, transactionId: r.transactionId })));
+        
+        const duplicateMap = new Map();
+        res.data.forEach((r: any) => {
+           if (r.exists) {
+             duplicateMap.set(`${r.email.toLowerCase()}_${r.session}`, r.reason);
+           }
+        });
+        
+        const checkedRows = newRows.map(r => {
+           if (r.session === "UNRECOGNIZED") {
+             return { ...r, status: "error" as const, message: r.message || "Unrecognized session" };
+           }
+           const reason = duplicateMap.get(`${r.email.toLowerCase()}_${r.session}`);
+           if (reason) {
+             return { ...r, status: "duplicate" as const, message: reason };
+           }
+           return r;
+        });
+        
+        setRows(checkedRows as BulkRow[]);
+        setSummary(null);
+      } catch (err) {
+        console.error("Duplicate check failed:", err);
+        setSummary("Failed to check for existing tickets. You can still proceed.");
+        setRows(newRows as BulkRow[]);
+      } finally {
+        setBusy(false);
+      }
     } catch {
       setParseError("Could not read that file.");
     }
   };
 
-  const patchRow = (email: string, patch: Partial<BulkRow>) => {
+  const patchRow = (email: string, session: string, patch: Partial<BulkRow>) => {
     setRows((prev) =>
-      prev.map((r) => (r.email === email ? { ...r, ...patch } : r))
+      prev.map((r) => (r.email === email && r.session === session ? { ...r, ...patch } : r))
     );
   };
 
   const applyGenerateResults = (results: BulkGenerateResult[]) => {
-    const byEmail = new Map(results.map((r) => [r.email.toLowerCase(), r]));
+    // Assuming BulkGenerateResult has session, but it might not. Wait!
+    // Let's just iterate over results and update rows if session matches.
+    // If backend returns session in BulkGenerateResult, we should use it.
+    // Let's assume BulkGenerateResult now has session, or it updates the row by email+session.
+    // Wait, BulkGenerateResult in api.ts doesn't have session. I need to update it!
+    const byEmailSession = new Map(results.map((r: any) => [`${r.email.toLowerCase()}_${r.session}`, r]));
     setRows((prev) =>
       prev.map((r) => {
-        const res = byEmail.get(r.email.toLowerCase());
+        const res = byEmailSession.get(`${r.email.toLowerCase()}_${r.session}`);
         if (!res) return r;
         return {
           ...r,
@@ -500,11 +539,18 @@ function BulkPanel() {
     if (rows.length === 0 || busy || activeJobId) return;
     setBusy(true);
     setSummary(null);
-    setRows((prev) => prev.map((r) => ({ ...r, status: "working" as const })));
+
+    const toProcess = rows.filter(r => r.status === "pending");
+    if (toProcess.length === 0) {
+      setSummary("No pending rows to generate.");
+      setBusy(false);
+      return;
+    }
+
+    setRows((prev) => prev.map((r) => r.status === "pending" ? { ...r, status: "working" as const } : r));
     try {
       const res = await generateTicketsBulk(
-        rows.map((r) => ({ email: r.email, transactionId: r.transactionId, name: r.name })),
-        session
+        toProcess.map((r) => ({ email: r.email, transactionId: r.transactionId, name: r.name, session: r.session }))
       );
       setSummary(res.message);
       setActiveJobId(res.jobId);
@@ -538,11 +584,11 @@ function BulkPanel() {
   };
 
   const generateOne = async (row: BulkRow) => {
-    if (busy) return;
-    patchRow(row.email, { status: "working" });
+    if (busy || row.session === "UNRECOGNIZED") return;
+    patchRow(row.email, row.session, { status: "working" });
     try {
-      const res = await generateTicket(row.email, session, row.transactionId, row.name);
-      patchRow(row.email, {
+      const res = await generateTicket(row.email, row.session as Session, row.transactionId, row.name);
+      patchRow(row.email, row.session, {
         status: "generated",
         ticketId: res.data.ticketId,
         emailSent: res.data.emailSent,
@@ -550,7 +596,7 @@ function BulkPanel() {
       });
     } catch (err) {
       const e = err as ApiError;
-      patchRow(row.email, {
+      patchRow(row.email, row.session, {
         status: e.status === 409 ? "duplicate" : "error",
         message: e.message,
       });
@@ -559,13 +605,14 @@ function BulkPanel() {
 
   const revokeOne = async (row: BulkRow) => {
     if (busy) return;
-    patchRow(row.email, { status: "working" });
+    patchRow(row.email, row.session, { status: "working" });
     try {
-      await revokeTicket({ email: row.email });
-      patchRow(row.email, { status: "revoked", message: undefined });
+      await revokeTicket({ email: row.email }); // Note: revokes all tickets for this email
+      // We could patch all sessions for this email, but since the API revoked all, let's update all matching rows
+      setRows(prev => prev.map(r => r.email === row.email ? { ...r, status: "revoked", message: undefined } : r));
     } catch (err) {
       const e = err as ApiError;
-      patchRow(row.email, {
+      patchRow(row.email, row.session, {
         status: e.status === 404 ? "not_found" : "error",
         message: e.message,
       });
@@ -606,22 +653,9 @@ function BulkPanel() {
             className="block w-full text-sm text-neutral-400 file:mr-3 file:rounded-md file:border file:border-neutral-700 file:bg-neutral-800 file:px-3 file:py-1.5 file:text-sm file:text-neutral-200 hover:file:bg-neutral-700"
           />
         </div>
-        <div>
-          <label className="mb-1 block text-sm text-neutral-300">
-            Session for batch
-          </label>
-          <select
-            value={session}
-            onChange={(e) => setSession(e.target.value as Session)}
-            className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-red-500"
-          >
-            <option value="SESSION_1">Session 1</option>
-            <option value="SESSION_2">Session 2</option>
-          </select>
-        </div>
       </div>
       <p className="mt-2 text-xs text-neutral-600">
-        CSV needs an <span className="font-mono">email</span> and <span className="font-mono">transaction id</span> column; an optional{" "}
+        CSV needs an <span className="font-mono">email</span>, <span className="font-mono">transaction id</span>, and <span className="font-mono">Select Session(s)</span> column; an optional{" "}
         <span className="font-mono">name</span> column personalises the email.
         Tickets are emailed automatically on generate.
       </p>
@@ -662,6 +696,7 @@ function BulkPanel() {
                   <th className="px-3 py-2 font-medium">Email</th>
                   <th className="px-3 py-2 font-medium">Name</th>
                   <th className="px-3 py-2 font-medium">Transaction ID</th>
+                  <th className="px-3 py-2 font-medium">Session</th>
                   <th className="px-3 py-2 font-medium">Status</th>
                   <th className="px-3 py-2 text-right font-medium">Actions</th>
                 </tr>
@@ -676,25 +711,31 @@ function BulkPanel() {
                     <td className="px-3 py-2 text-neutral-400">
                       {r.transactionId || "—"}
                     </td>
+                    <td className="px-3 py-2 text-neutral-400">
+                      {r.session === "SESSION_1" ? "Session 1" : r.session === "SESSION_2" ? "Session 2" : r.session}
+                    </td>
                     <td className={`px-3 py-2 ${STATUS_STYLES[r.status]}`}>
                       {r.status === "working" ? "…" : r.status}
                       {r.status === "generated" && r.emailSent === false && (
                         <span className="ml-1 text-amber-400">(no email)</span>
                       )}
-                      {r.message && (
-                        <span
-                          className="ml-1 text-neutral-600"
-                          title={r.message}
-                        >
-                          ⓘ
+                      {(r.status === "duplicate" || r.status === "error") && r.message ? (
+                        <span className="ml-2 text-xs opacity-80" title={r.message}>
+                          - {r.message}
                         </span>
+                      ) : (
+                        r.message && (
+                          <span className="ml-1 text-neutral-600" title={r.message}>
+                            ⓘ
+                          </span>
+                        )
                       )}
                     </td>
                     <td className="px-3 py-2 text-right">
                       <div className="inline-flex gap-2">
                         <button
                           onClick={() => generateOne(r)}
-                          disabled={busy || r.status === "working"}
+                          disabled={busy || r.status === "working" || r.session === "UNRECOGNIZED"}
                           className="rounded-md border border-neutral-700 px-2 py-1 text-xs transition hover:bg-neutral-800 disabled:opacity-50"
                         >
                           Generate

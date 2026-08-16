@@ -54,6 +54,8 @@ export interface ParsedAttendee {
   email: string;
   transactionId: string;
   name?: string;
+  session: "SESSION_1" | "SESSION_2" | "UNRECOGNIZED";
+  message?: string;
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -70,6 +72,7 @@ export function parseAttendeeCsv(text: string): ParsedAttendee[] {
   let emailIdx = 0;
   let nameIdx = 1;
   let txnIdx = -1;
+  let sessionIdx = -1;
   let startRow = 0;
 
   const header = rows[0].map((c) => c.trim().toLowerCase());
@@ -80,6 +83,8 @@ export function parseAttendeeCsv(text: string): ParsedAttendee[] {
     nameIdx = ni === -1 ? -1 : ni;
     const ti = header.findIndex((c) => c === "transaction id" || c === "transactionid" || c === "txn id");
     txnIdx = ti;
+    const si = header.findIndex((c) => c === "select session(s)" || c === "session" || c === "sessions");
+    sessionIdx = si;
     startRow = 1;
   }
 
@@ -101,7 +106,29 @@ export function parseAttendeeCsv(text: string): ParsedAttendee[] {
     const transactionId = txnIdx >= 0 && cols[txnIdx] ? cols[txnIdx].trim() : "";
     if (!transactionId) continue; // Skip rows missing transactionId since it's required
 
-    out.push({ email, transactionId, name: name || undefined });
+    const rawSession = sessionIdx >= 0 && cols[sessionIdx] ? cols[sessionIdx].trim() : "";
+    
+    if (!rawSession) {
+      out.push({ email, transactionId, name: name || undefined, session: "UNRECOGNIZED", message: "Missing session value" });
+      continue;
+    }
+
+    const parts = rawSession.split(",").map(p => p.trim());
+    let recognizedCount = 0;
+
+    for (const part of parts) {
+      if (part === "Session 1") {
+        out.push({ email, transactionId, name: name || undefined, session: "SESSION_1" });
+        recognizedCount++;
+      } else if (part === "Session 2") {
+        out.push({ email, transactionId, name: name || undefined, session: "SESSION_2" });
+        recognizedCount++;
+      }
+    }
+
+    if (recognizedCount === 0) {
+      out.push({ email, transactionId, name: name || undefined, session: "UNRECOGNIZED", message: `Unrecognized session value: "${rawSession}"` });
+    }
   }
 
   return out;

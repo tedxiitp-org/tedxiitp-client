@@ -97,10 +97,12 @@ export interface BulkAttendee {
   email: string;
   transactionId: string;
   name?: string;
+  session: Session | "UNRECOGNIZED";
 }
 
 export interface BulkGenerateResult {
   email: string;
+  session: string;
   status: "generated" | "duplicate" | "error";
   ticketId?: string;
   emailSent?: boolean;
@@ -108,8 +110,7 @@ export interface BulkGenerateResult {
 }
 
 export function generateTicketsBulk(
-  attendees: BulkAttendee[],
-  session: Session
+  attendees: BulkAttendee[]
 ) {
   return request<{
     success: boolean;
@@ -117,8 +118,28 @@ export function generateTicketsBulk(
     jobId: string;
   }>("/api/qr/generate-bulk", {
     method: "POST",
-    body: JSON.stringify({ attendees, session }),
+    body: JSON.stringify({ attendees }),
   });
+}
+
+export interface CheckDuplicatePayload {
+  email: string;
+  transactionId: string;
+  session: Session | "UNRECOGNIZED";
+}
+
+export interface CheckDuplicateResponse {
+  email: string;
+  session: string;
+  exists: boolean;
+  reason?: string;
+}
+
+export function checkDuplicates(items: CheckDuplicatePayload[]) {
+  return request<{ success: boolean; data: CheckDuplicateResponse[] }>(
+    "/api/qr/admin/ticket/check-duplicates",
+    { method: "POST", body: JSON.stringify({ items }) }
+  );
 }
 
 export interface BulkJobStatusResponse {
