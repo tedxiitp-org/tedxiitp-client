@@ -57,13 +57,13 @@ async function request<T>(
 // ---- Auth ----
 export function login(email: string, password: string) {
   return request<{ success: boolean; message: string; role: Role }>(
-    "/api/auth/login",
+    "/api/qr/auth/login",
     { method: "POST", body: JSON.stringify({ email, password }) }
   );
 }
 
 export function logout() {
-  return request<{ success: boolean }>("/api/auth/logout", { method: "POST" });
+  return request<{ success: boolean }>("/api/qr/auth/logout", { method: "POST" });
 }
 
 // ---- Admin: Ticket generation ----
