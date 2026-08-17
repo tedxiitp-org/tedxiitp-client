@@ -15,6 +15,7 @@ import {
 } from "next/font/google";
 import { cn } from "@/lib/utils";
 import localFont from "next/font/local";
+import DynamicTabTitle from "@/components/tab";
 
 export const metadata: Metadata = {
   title: {
@@ -171,6 +172,7 @@ export default function RootLayout({ children }: Props) {
         suppressHydrationWarning
         className="bg-[#0a0a0a] bg-[url('/bg1.png')] bg-repeat bg-top bg-left text-white min-h-screen flex flex-col"
       >
+        <DynamicTabTitle />
         <NextTopLoader
           color="#DC2626"
           height={3}
