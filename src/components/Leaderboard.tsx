@@ -48,7 +48,7 @@ export default function Leaderboard({ gameId }: LeaderboardProps) {
           <div className="space-y-3">
             {scores.map((entry, index) => (
               <div
-                key={entry.id}
+                key={entry.userId}
                 className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? 'bg-yellow-500/10 border-yellow-500/30' :
                     index === 1 ? 'bg-gray-300/10 border-gray-400/30' :
                       index === 2 ? 'bg-amber-700/10 border-amber-700/30' :
@@ -64,11 +64,11 @@ export default function Leaderboard({ gameId }: LeaderboardProps) {
                     {index + 1}
                   </span>
                   <span className="text-white font-[family-name:var(--font-inter)] font-medium">
-                    {entry.playerName}
+                    {entry.username}
                   </span>
                 </div>
                 <span className="text-red-400 font-bold font-[family-name:var(--font-space)] tracking-wider">
-                  {entry.score}
+                  {entry.cumulativeScore}
                 </span>
               </div>
             ))}

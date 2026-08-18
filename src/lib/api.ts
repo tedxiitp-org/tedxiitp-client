@@ -329,9 +329,9 @@ export async function validateScan(
 
 // ---- Games ----
 export interface LeaderboardEntry {
-  id: string;
-  playerName: string;
-  score: number;
+  userId: string;
+  username: string;
+  cumulativeScore: number;
 }
 
 export interface GlobalLeaderboardResponse {

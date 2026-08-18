@@ -101,7 +101,7 @@ export default function GlobalLeaderboard() {
 
                     return (
                       <div
-                        key={entry.id}
+                        key={entry.userId}
                         className={`group grid grid-cols-12 gap-2 sm:gap-4 items-center px-3 sm:px-6 py-4 border-b border-white/5 transition-all duration-300 relative overflow-hidden cursor-default ${globalRank === 1 ? 'bg-gradient-to-r from-yellow-500/10 to-transparent' :
                           globalRank === 2 ? 'bg-gradient-to-r from-gray-300/10 to-transparent' :
                             globalRank === 3 ? 'bg-gradient-to-r from-amber-600/10 to-transparent' :
@@ -136,14 +136,14 @@ export default function GlobalLeaderboard() {
                         <div className="col-span-5 sm:col-span-7 truncate pr-2">
                           <span className={`font-[family-name:var(--font-inter)] text-sm sm:text-lg tracking-wide transition-transform duration-300 inline-block sm:group-hover:translate-x-2 truncate w-full ${isTop3 ? 'font-bold text-white' : 'font-medium text-gray-300 group-hover:text-white'
                             }`}>
-                            {entry.playerName}
+                            {entry.username}
                           </span>
                         </div>
 
                         {/* Score */}
                         <div className="col-span-4 sm:col-span-3 text-right">
                           <span className="text-red-500 font-bold font-[family-name:var(--font-space)] text-sm sm:text-xl tracking-widest">
-                            {Number(entry.score ?? 0).toLocaleString()}
+                            {Number(entry.cumulativeScore ?? 0).toLocaleString()}
                           </span>
                         </div>
                       </div>
