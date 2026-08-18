@@ -6,7 +6,7 @@ export default function DynamicTabTitle() {
   useEffect(() => {
     let originalTitle = "";
     let intervalId: NodeJS.Timeout | null = null;
-    const alertTitle = "🛒 Merch Live Now!";
+    const alertTitle = "Theme Video Teaser Live Now!";
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
