@@ -73,7 +73,7 @@ export default function GlobalLeaderboard() {
             </div>
           )}
 
-          {!data || data.data.length === 0 ? (
+          {!loading && (!data || data.data.length === 0) ? (
             <div className="flex flex-col items-center justify-center bg-transparent z-0 w-full py-12">
               <div className="w-16 h-16 mb-4 rounded-full border border-red-600/20 flex items-center justify-center bg-red-600/5 shadow-[0_0_15px_rgba(220,38,38,0.05)]">
                 <Trophy className="w-8 h-8 text-gray-600" />
