@@ -1,0 +1,168 @@
+{
+  "id": "level-01",
+  "index": 1,
+  "board": {
+    "rows": 6,
+    "cols": 6
+  },
+  "timeLimitSeconds": 600,
+  "coinReward": 12,
+  "arrows": [
+    {
+      "id": 1,
+      "tail": {
+        "row": 0,
+        "col": 0
+      },
+      "path": [
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 2,
+      "tail": {
+        "row": 0,
+        "col": 2
+      },
+      "path": [
+        "RIGHT",
+        "RIGHT",
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 3,
+      "tail": {
+        "row": 1,
+        "col": 5
+      },
+      "path": [
+        "LEFT",
+        "LEFT",
+        "LEFT"
+      ],
+      "headDirection": "LEFT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 4,
+      "tail": {
+        "row": 1,
+        "col": 1
+      },
+      "path": [
+        "LEFT"
+      ],
+      "headDirection": "LEFT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 5,
+      "tail": {
+        "row": 2,
+        "col": 0
+      },
+      "path": [
+        "RIGHT",
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 6,
+      "tail": {
+        "row": 2,
+        "col": 3
+      },
+      "path": [
+        "RIGHT",
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 7,
+      "tail": {
+        "row": 3,
+        "col": 5
+      },
+      "path": [
+        "LEFT",
+        "LEFT",
+        "LEFT"
+      ],
+      "headDirection": "LEFT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 8,
+      "tail": {
+        "row": 3,
+        "col": 1
+      },
+      "path": [
+        "LEFT"
+      ],
+      "headDirection": "LEFT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 9,
+      "tail": {
+        "row": 4,
+        "col": 0
+      },
+      "path": [
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 10,
+      "tail": {
+        "row": 4,
+        "col": 2
+      },
+      "path": [
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 11,
+      "tail": {
+        "row": 4,
+        "col": 4
+      },
+      "path": [
+        "RIGHT"
+      ],
+      "headDirection": "RIGHT",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 12,
+      "tail": {
+        "row": 5,
+        "col": 5
+      },
+      "path": [
+        "LEFT",
+        "LEFT",
+        "LEFT",
+        "LEFT",
+        "LEFT"
+      ],
+      "headDirection": "LEFT",
+      "color": "#FFFFFF"
+    }
+  ]
+}

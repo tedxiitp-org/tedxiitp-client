@@ -1,0 +1,232 @@
+{
+  "id": "level-10",
+  "index": 10,
+  "board": { "rows": 21, "cols": 21 },
+  "timeLimitSeconds": 600,
+  "coinReward": 0,
+  "arrows": [{
+"id": 1,
+"tail": { "row":0, "col": 11 },
+"path": ["DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","DOWN","LEFT","LEFT","LEFT","LEFT","UP","UP","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 2,
+"tail": { "row":2, "col": 9 },
+"path": ["RIGHT","UP"],
+"headDirection": "UP",
+"color": "#00D2FF"
+},
+{
+"id": 3,
+"tail": { "row":3, "col":14  },
+"path": ["LEFT","UP","LEFT","UP"],
+"headDirection":"UP" ,
+"color": "#00D2FF"
+},
+{
+"id":4,
+"tail": { "row":3, "col": 8 },
+"path": ["RIGHT","RIGHT","DOWN","LEFT"],
+"headDirection":"LEFT",
+"color": "#00D2FF"
+},
+{
+"id": 5,
+"tail": { "row":3, "col": 12 },
+"path": ["DOWN","RIGHT"],
+"headDirection":"RIGHT" ,
+"color": "#00D2FF"
+},
+{
+"id": 6,
+"tail": { "row":8, "col": 8 },
+"path": ["UP","UP","UP","UP","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+},
+{
+"id": 7,
+"tail": { "row":7, "col":13  },
+"path": ["LEFT","UP","UP","RIGHT","RIGHT","UP","RIGHT"],
+"headDirection":"RIGHT" ,
+"color": "#00D2FF"
+},
+{
+"id": 8,
+"tail": { "row":8, "col": 9 },
+"path": ["UP","UP","UP","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id":9 ,
+"tail": { "row":8, "col":12 },
+"path": ["RIGHT","RIGHT","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id":10 ,
+"tail": { "row":5, "col": 16 },
+"path": ["LEFT","DOWN","DOWN","LEFT","UP","LEFT"],
+"headDirection":"LEFT" ,
+"color": "#00D2FF"
+},
+{
+"id": 11,
+"tail": { "row":8, "col": 5 },
+"path": ["RIGHT","RIGHT","UP","UP","UP","LEFT","DOWN","LEFT","DOWN","LEFT","DOWN","LEFT"],
+"headDirection":"LEFT" ,
+"color": "#00D2FF"
+},
+{
+"id":12 ,
+"tail": { "row":7, "col": 18 },
+"path": ["LEFT","UP","LEFT","DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id":13 ,
+"tail": { "row":13, "col": 16 },
+"path": ["UP","UP","UP","UP","UP","RIGHT","DOWN","DOWN","DOWN","DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 14,
+"tail": { "row":10, "col":20  },
+"path": ["UP","LEFT","UP","LEFT","DOWN","DOWN","DOWN","DOWN","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id": 15,
+"tail": { "row":11, "col": 20 },
+"path": ["LEFT","UP"],
+"headDirection": "UP",
+"color": "#00D2FF"
+},
+{
+"id": 16,
+"tail": { "row":10, "col": 13 },
+"path": ["RIGHT","DOWN","LEFT","LEFT","UP"],
+"headDirection":"UP" ,
+"color": "#00D2FF"
+},
+{
+"id": 17,
+"tail": { "row":12, "col": 14 },
+"path": ["LEFT","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+},
+{
+"id": 18,
+"tail": { "row":9, "col": 9 },
+"path": ["DOWN","DOWN","RIGHT","RIGHT","DOWN","LEFT","LEFT","DOWN","RIGHT","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id": 19,
+"tail": { "row":11, "col": 5 },
+"path": ["RIGHT","RIGHT","RIGHT","UP","UP","LEFT","LEFT","LEFT","LEFT"],
+"headDirection":"LEFT" ,
+"color": "#00D2FF"
+},
+{
+"id": 20,
+"tail": { "row":10, "col": 6 },
+"path": ["RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id":21 ,
+"tail": { "row":11, "col": 0 },
+"path": ["RIGHT","DOWN","RIGHT","DOWN","RIGHT","RIGHT","UP","UP","UP","RIGHT"],
+"headDirection":"RIGHT" ,
+"color": "#00D2FF"
+},
+{
+"id": 22,
+"tail": { "row":9, "col": 2 },
+"path": ["RIGHT","DOWN","LEFT","LEFT"],
+"headDirection":"LEFT" ,
+"color": "#00D2FF"
+},
+{
+"id": 23,
+"tail": { "row":12, "col": 3 },
+"path": ["UP","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+},
+{
+"id": 24,
+"tail": { "row":12, "col": 5},
+"path": ["DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 25,
+"tail": { "row":14, "col": 4 },
+"path": ["RIGHT","DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 26,
+"tail": { "row":17, "col": 12 },
+"path": ["UP","UP","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP"],
+"headDirection": "UP",
+"color": "#00D2FF"
+},
+{
+"id": 27,
+"tail": { "row":13, "col":18  },
+"path": ["LEFT","DOWN","LEFT","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id": 28,
+"tail": { "row":18, "col": 13 },
+"path": ["UP","UP","UP","UP","RIGHT","RIGHT","DOWN","DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id":29 ,
+"tail": { "row":17, "col": 14 },
+"path": ["UP","UP"],
+"headDirection": "UP",
+"color": "#00D2FF"
+},
+{
+"id": 30,
+"tail": { "row":19, "col": 10 },
+"path": ["UP","UP","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+},
+{
+"id":31 ,
+"tail": { "row":19, "col": 12 },
+"path": ["UP","LEFT","DOWN","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id":32 ,
+"tail": { "row":17, "col": 7 },
+"path": ["RIGHT","DOWN","RIGHT","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+}
+]
+}

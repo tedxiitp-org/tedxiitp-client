@@ -17,12 +17,12 @@ const games = [
     active: true,
   },
   {
-    id: "game2",
-    title: "Coming Soon",
-    description: "Another exciting game is on the way.",
-    thumbnail: "/placeholder-game.jpg",
-    href: "#",
-    active: false,
+    id: "arrowEscape",
+    title: "Arrow Escape",
+    description: "Beyond the maze, every arrow has a direction—find the pattern and break free.",
+    thumbnail: "/arrowEscapeThumbnail.png",
+    href: "/games/arrow-escape",
+    active: true,
   },
   {
     id: "game3",

@@ -1,0 +1,113 @@
+{
+  "id": "level-02",
+  "index": 2,
+  "board": { "rows": 10, "cols": 10 },
+  "timeLimitSeconds": 600,
+  "coinReward": 0,
+  "arrows": [{
+      "id": 1,
+      "tail": { "row": 0, "col": 0 },
+      "path": ["RIGHT","RIGHT","DOWN","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 2,
+      "tail": { "row": 0, "col": 3 },
+      "path": ["RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 3,
+      "tail": { "row": 2, "col": 1 },
+      "path": ["UP","LEFT","DOWN","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","UP","RIGHT","UP","RIGHT","RIGHT","RIGHT","RIGHT"],
+      "headDirection":"RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 4,
+      "tail": { "row": 4, "col": 3 },
+      "path": ["LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 5,
+      "tail": { "row": 3, "col": 3 },
+      "path": ["RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","DOWN"],
+      "headDirection": "DOWN",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 6,
+      "tail": { "row": 6, "col": 2 },
+      "path": ["DOWN","DOWN","LEFT","LEFT"],
+      "headDirection": "LEFT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 7,
+      "tail": { "row": 9, "col": 0 },
+      "path": ["RIGHT","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 8,
+      "tail": { "row": 2, "col": 5 },
+      "path": ["DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","DOWN","DOWN","DOWN"],
+      "headDirection": "DOWN",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 9,
+      "tail": { "row": 2, "col": 9 },
+      "path": ["UP","LEFT","DOWN","LEFT","UP","LEFT","DOWN","DOWN","DOWN"],
+      "headDirection": "DOWN",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 10,
+      "tail": { "row": 4, "col": 7 },
+      "path": ["UP","RIGHT","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 11,
+      "tail": { "row": 4, "col": 9 },
+      "path": ["LEFT","DOWN","LEFT","LEFT","DOWN","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 12,
+      "tail": { "row": 5, "col": 9 },
+      "path": ["DOWN","DOWN"],
+      "headDirection": "DOWN",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 13,
+      "tail": { "row": 6, "col": 8 },
+      "path": ["DOWN","DOWN","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 14,
+      "tail": { "row": 7, "col": 4 },
+      "path": ["RIGHT","RIGHT","RIGHT","DOWN","DOWN","RIGHT","RIGHT"],
+      "headDirection": "RIGHT",
+      "color": "#FF5A5F"
+    },
+    {
+      "id": 15,
+      "tail": { "row": 8, "col": 4 },
+      "path": ["DOWN","RIGHT","UP","RIGHT","DOWN"],
+      "headDirection": "DOWN",
+      "color": "#FF5A5F"
+    }
+]
+}

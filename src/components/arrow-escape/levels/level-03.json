@@ -1,0 +1,106 @@
+{
+  "id": "level-03",
+  "index": 3,
+  "board": { "rows": 13, "cols": 10 },
+  "timeLimitSeconds": 600,
+  "coinReward": 0,
+  "arrows": [{
+"id":1 ,
+"tail": { "row":5 , "col": 9 },
+"path": ["UP","UP","UP","UP","UP","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id":2 ,
+"tail": { "row":11 , "col": 0 },
+"path": ["DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id":3 ,
+"tail": { "row": 12, "col": 2 },
+"path": ["LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],
+"headDirection": "UP",
+"color": "#00D2FF"
+},
+{
+"id":4 ,
+"tail": { "row":12 , "col":  3},
+"path": ["UP"],
+"headDirection": "UP",
+"color": "#00D2FF"
+},
+{
+"id": 5,
+"tail": { "row": 11, "col": 5 },
+"path": ["LEFT","DOWN","RIGHT","RIGHT","RIGHT","UP","UP","RIGHT","UP","LEFT","LEFT","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+},
+{
+"id":6 ,
+"tail": { "row": 10, "col": 6 },
+"path": ["LEFT","LEFT","LEFT","UP","UP","LEFT","DOWN","DOWN","DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 7,
+"tail": { "row": 5, "col": 2 },
+"path": ["DOWN","DOWN","RIGHT","UP","UP","RIGHT","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT"],
+"headDirection":"RIGHT" ,
+"color": "#00D2FF"
+},
+{
+"id":8 ,
+"tail": { "row":9 , "col": 4 },
+"path": ["UP","UP","RIGHT","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id":9 ,
+"tail": { "row": 8, "col": 5 },
+"path": ["RIGHT","RIGHT","UP","RIGHT"],
+"headDirection":"RIGHT" ,
+"color": "#00D2FF"
+},
+{
+"id": 10,
+"tail": { "row": 8, "col": 9 },
+"path": ["DOWN","DOWN","DOWN","DOWN","LEFT","UP"],
+"headDirection":"UP",
+"color": "#00D2FF"
+},
+{
+"id":11,
+"tail": { "row":5 , "col": 8 },
+"path": ["UP","UP","UP","UP"],
+"headDirection":"UP",
+"color": "#00D2FF"
+},
+{
+"id": 12,
+"tail": { "row": 2, "col": 4 },
+"path": ["RIGHT","RIGHT","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id": 13,
+"tail": { "row": 1, "col": 1 },
+"path": ["RIGHT","DOWN","DOWN","DOWN","RIGHT","UP","UP","UP","RIGHT","RIGHT","RIGHT","RIGHT"],
+"headDirection":"RIGHT" ,
+"color": "#00D2FF"
+},
+{
+"id": 14,
+"tail": { "row": 4, "col":6  },
+"path": ["LEFT","LEFT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+}
+]
+}

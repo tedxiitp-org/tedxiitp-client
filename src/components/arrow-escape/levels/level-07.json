@@ -1,0 +1,99 @@
+{
+  "id": "level-07",
+  "index": 7,
+  "board": { "rows": 10, "cols": 10 },
+  "timeLimitSeconds": 600,
+  "coinReward": 0,
+  "arrows": [{
+"id": 1,
+"tail": { "row":4, "col": 3 },
+"path":["LEFT","LEFT","LEFT","UP","UP","UP","UP","RIGHT","DOWN","RIGHT","RIGHT","RIGHT","RIGHT"],
+"headDirection":"RIGHT",
+"color": "#00D2FF"
+},
+{
+"id": 2,
+"tail": { "row":6, "col":5  },
+"path":["UP","UP","UP","UP","LEFT","LEFT","LEFT","LEFT","DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id":3 ,
+"tail": { "row":3, "col": 2 },
+"path":["RIGHT","RIGHT","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 4,
+"tail": { "row":0, "col": 2 },
+"path":["RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id":5 ,
+"tail": { "row":5, "col": 9 },
+"path":["UP","UP","UP","UP","UP","LEFT","LEFT","DOWN","DOWN","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id":6 ,
+"tail": { "row":6, "col": 1 },
+"path":["RIGHT","RIGHT","UP","LEFT","LEFT","LEFT","DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id": 7,
+"tail": { "row":7, "col": 1 },
+"path":["LEFT"],
+"headDirection":"LEFT",
+"color": "#00D2FF"
+},
+{
+"id":8 ,
+"tail": { "row":8, "col": 0 },
+"path":["DOWN","RIGHT","RIGHT","RIGHT","RIGHT","UP","UP","LEFT","LEFT"],
+"headDirection":"LEFT",
+"color": "#00D2FF"
+},
+{
+"id": 9,
+"tail": { "row":7, "col": 9 },
+"path":["DOWN","DOWN","LEFT","LEFT","LEFT"],
+"headDirection":"LEFT",
+"color": "#00D2FF"
+},
+{
+"id":10 ,
+"tail": { "row":3, "col":7  },
+"path":["DOWN","LEFT","DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id":11 ,
+"tail": { "row":6, "col": 6 },
+"path":["DOWN"],
+"headDirection":"DOWN",
+"color": "#00D2FF"
+},
+{
+"id":12 ,
+"tail": { "row":5, "col": 7 },
+"path":["DOWN","DOWN","DOWN","LEFT","LEFT"],
+"headDirection":"LEFT",
+"color": "#00D2FF"
+},
+{
+"id":13 ,
+"tail": { "row":8, "col": 3 },
+"path":["LEFT","LEFT"],
+"headDirection":"LEFT",
+"color": "#00D2FF"
+}
+]
+}

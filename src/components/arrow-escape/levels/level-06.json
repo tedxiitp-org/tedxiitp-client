@@ -1,0 +1,134 @@
+{
+  "id": "level-06",
+  "index": 6,
+  "board": { "rows": 10, "cols": 17 },
+  "timeLimitSeconds": 600,
+  "coinReward": 0,
+  "arrows": [{
+"id": 1,
+"tail": { "row": 0, "col": 9 },
+"path": ["DOWN"],
+"headDirection": "DOWN",
+"color": "#00D2FF"
+},
+{
+  "id":2,
+  "tail":{"row":2,"col":7},
+  "path":["RIGHT"],
+  "headDirection":"RIGHT",
+  "color":"#00D2FF"
+},
+{
+  "id":3,
+  "tail":{"row":2,"col":11},
+  "path":["LEFT","UP"],
+  "headDirection":"UP",
+  "color":"#00D2FF"
+},
+{
+  "id":4,
+  "tail":{"row":3,"col":7},
+  "path":["RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","DOWN","RIGHT"],
+  "headDirection":"RIGHT",
+  "color":"#00D2FF"
+},
+{
+  "id":5,
+  "tail":{"row":4,"col":13},
+  "path":["DOWN","RIGHT","DOWN","LEFT"],
+  "headDirection":"LEFT",
+  "color":"#00D2FF"
+},
+{
+  "id":6,
+  "tail":{"row":6,"col":15},
+  "path":["DOWN","LEFT","LEFT"],
+  "headDirection":"LEFT",
+  "color":"#00D2FF"
+},
+{
+  "id":7,
+  "tail":{"row":4,"col":9},
+  "path":["RIGHT","RIGHT","DOWN","LEFT","LEFT","LEFT","UP","LEFT","DOWN","DOWN"],
+  "headDirection":"DOWN",
+  "color":"#00D2FF"
+},
+{
+  "id":8,
+  "tail":{"row":3,"col":6},
+  "path":["DOWN","DOWN","DOWN","LEFT","UP","UP"],
+  "headDirection":"UP",
+  "color":"#00D2FF"
+},
+{
+  "id":9,
+  "tail":{"row":5,"col":4},
+  "path":["DOWN"],
+  "headDirection":"DOWN",
+  "color":"#00D2FF"
+},
+{
+  "id":10,
+  "tail":{"row":8,"col":11},
+  "path":["UP","UP","LEFT","LEFT","LEFT","DOWN"],
+  "headDirection":"DOWN",
+  "color":"#00D2FF"
+},
+{
+  "id":11,
+  "tail":{"row":7,"col":10},
+  "path":["LEFT"],
+  "headDirection":"LEFT",
+  "color":"#00D2FF"
+},
+{
+  "id":12,
+  "tail":{"row":9,"col":10},
+  "path":["UP","LEFT","LEFT","LEFT","UP","LEFT","LEFT","LEFT","LEFT"],
+  "headDirection":"LEFT",
+  "color":"#00D2FF"
+},
+{
+  "id":13,
+  "tail":{"row":9,"col":11},
+  "path":["RIGHT","RIGHT","RIGHT"],
+  "headDirection":"RIGHT",
+  "color":"#00D2FF"
+},
+{
+  "id":14,
+  "tail":{"row":9,"col":9},
+  "path":["LEFT","LEFT"],
+  "headDirection":"LEFT",
+  "color":"#00D2FF"
+},
+{
+  "id":15,
+  "tail":{"row":8,"col":6},
+  "path":["DOWN"],
+  "headDirection":"DOWN",
+  "color":"#00D2FF"
+},
+{
+  "id":16,
+  "tail":{"row":9,"col":5},
+  "path":["UP"],
+  "headDirection":"UP",
+  "color":"#00D2FF"
+},
+{
+  "id":17,
+  "tail":{"row":9,"col":3},
+  "path":["UP","RIGHT","DOWN"],
+  "headDirection":"DOWN",
+  "color":"#00D2FF"
+},
+{
+  "id":18,
+  "tail":{"row":9,"col":2},
+  "path":["LEFT","LEFT","UP","RIGHT","UP","RIGHT","UP","RIGHT","UP"],
+  "headDirection":"UP",
+  "color":"#00D2FF"
+}
+]
+}

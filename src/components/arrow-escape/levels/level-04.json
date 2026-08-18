@@ -1,0 +1,66 @@
+{
+  "id": "level-04",
+  "index": 4,
+  "board": { "rows": 13, "cols": 11 },
+  "timeLimitSeconds": 600,
+  "coinReward": 0,
+  "arrows": [
+    {
+"id": 1,
+"tail": { "row":7, "col": 10 },
+"path": ["DOWN","DOWN","LEFT","DOWN","LEFT","LEFT","DOWN","LEFT","DOWN","LEFT","LEFT","LEFT","UP","LEFT","UP","LEFT","UP","LEFT","UP","UP","UP","UP","UP","UP","RIGHT","UP","RIGHT","UP","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","RIGHT","DOWN","RIGHT","RIGHT","DOWN","RIGHT","DOWN","DOWN","LEFT","DOWN","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id": 2,
+"tail": { "row":3 , "col": 2 },
+"path": ["DOWN","RIGHT","UP","UP","RIGHT","RIGHT","RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id":3 ,
+"tail": { "row":3 , "col": 8 },
+"path": ["DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","UP","LEFT","UP","UP","UP","LEFT","DOWN","DOWN","LEFT","LEFT"],
+"headDirection": "LEFT",
+"color": "#00D2FF"
+},
+{
+"id": 4,
+"tail": { "row":9 , "col": 2 },
+"path": ["UP","UP","UP","RIGHT","DOWN","DOWN","DOWN","DOWN","RIGHT","UP","UP","UP","RIGHT","DOWN","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id": 5,
+"tail": { "row": 4, "col":  1},
+"path": ["DOWN","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id": 6,
+"tail": { "row": 8, "col": 6 },
+"path": ["RIGHT"],
+"headDirection": "RIGHT",
+"color": "#00D2FF"
+},
+{
+"id": 7,
+"tail": { "row":8 , "col": 9 },
+"path": ["LEFT","DOWN","LEFT","LEFT","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+},
+{
+"id": 8,
+"tail": { "row":5 , "col": 6 },
+"path": ["UP","UP","RIGHT","DOWN","DOWN","DOWN"],
+"headDirection":"DOWN" ,
+"color": "#00D2FF"
+}
+
+  ]
+}
