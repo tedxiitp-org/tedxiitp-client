@@ -738,8 +738,8 @@ function BulkPanel() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r) => (
-                  <tr key={r.email} className="border-b border-neutral-900">
+                {rows.map((r, index) => (
+                  <tr key={`${r.email}-${index}`} className="border-b border-neutral-900">
                     <td className="px-3 py-2">{r.email}</td>
                     <td className="px-3 py-2 text-neutral-400">
                       {r.name || "—"}
