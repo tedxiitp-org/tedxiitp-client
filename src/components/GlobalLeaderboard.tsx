@@ -39,7 +39,7 @@ export default function GlobalLeaderboard() {
       <div className="flex flex-col items-center justify-center mb-10 gap-4 text-center relative">
         {/* Decorative Red Accent Line */}
         <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-1 bg-red-600"></div>
-        
+
         <div className="flex flex-col items-center">
           <div className="flex items-center justify-center gap-3 text-red-600 font-[family-name:var(--font-space)] tracking-widest text-sm font-bold uppercase mb-4">
             <Trophy className="w-5 h-5" />
@@ -53,10 +53,10 @@ export default function GlobalLeaderboard() {
           </p>
         </div>
       </div>
-      
+
       {/* Table Container */}
       <div className="w-full bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl relative">
-        
+
         {/* Table Headers */}
         <div className="grid grid-cols-12 gap-2 sm:gap-4 px-3 sm:px-6 py-4 border-b border-white/10 bg-white/5 text-gray-400 font-[family-name:var(--font-inter)] text-[10px] sm:text-xs font-bold tracking-widest sm:tracking-[0.2em] uppercase">
           <div className="col-span-3 sm:col-span-2 text-center">Rank</div>
@@ -73,7 +73,7 @@ export default function GlobalLeaderboard() {
             </div>
           )}
 
-          {!data || data.data.length === 0 ? (
+          {!loading && (!data || data.data.length === 0) ? (
             <div className="flex flex-col items-center justify-center bg-transparent z-0 w-full py-12">
               <div className="w-16 h-16 mb-4 rounded-full border border-red-600/20 flex items-center justify-center bg-red-600/5 shadow-[0_0_15px_rgba(220,38,38,0.05)]">
                 <Trophy className="w-8 h-8 text-gray-600" />
@@ -98,16 +98,15 @@ export default function GlobalLeaderboard() {
                   {data.data.map((entry, index) => {
                     const globalRank = (page - 1) * limit + index + 1;
                     const isTop3 = globalRank <= 3;
-                    
+
                     return (
-                      <div 
-                        key={entry.id} 
-                        className={`group grid grid-cols-12 gap-2 sm:gap-4 items-center px-3 sm:px-6 py-4 border-b border-white/5 transition-all duration-300 relative overflow-hidden cursor-default ${
-                          globalRank === 1 ? 'bg-gradient-to-r from-yellow-500/10 to-transparent' : 
-                          globalRank === 2 ? 'bg-gradient-to-r from-gray-300/10 to-transparent' : 
-                          globalRank === 3 ? 'bg-gradient-to-r from-amber-600/10 to-transparent' : 
-                          'hover:bg-white/5'
-                        }`}
+                      <div
+                        key={entry.userId}
+                        className={`group grid grid-cols-12 gap-2 sm:gap-4 items-center px-3 sm:px-6 py-4 border-b border-white/5 transition-all duration-300 relative overflow-hidden cursor-default ${globalRank === 1 ? 'bg-gradient-to-r from-yellow-500/10 to-transparent' :
+                          globalRank === 2 ? 'bg-gradient-to-r from-gray-300/10 to-transparent' :
+                            globalRank === 3 ? 'bg-gradient-to-r from-amber-600/10 to-transparent' :
+                              'hover:bg-white/5'
+                          }`}
                       >
                         {/* Hover Accent Line */}
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
@@ -115,16 +114,14 @@ export default function GlobalLeaderboard() {
                         {/* Rank Number */}
                         <div className="col-span-3 sm:col-span-2 flex justify-center items-center">
                           {isTop3 ? (
-                            <div className={`relative flex items-center justify-center w-8 h-8 rounded-sm transform rotate-45 border ${
-                              globalRank === 1 ? 'bg-yellow-500/10 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]' :
+                            <div className={`relative flex items-center justify-center w-8 h-8 rounded-sm transform rotate-45 border ${globalRank === 1 ? 'bg-yellow-500/10 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]' :
                               globalRank === 2 ? 'bg-gray-300/10 border-gray-400 shadow-[0_0_15px_rgba(156,163,175,0.2)]' :
-                              'bg-amber-600/10 border-amber-600 shadow-[0_0_15px_rgba(217,119,6,0.3)]'
-                            }`}>
-                              <span className={`transform -rotate-45 font-black font-[family-name:var(--font-space)] text-sm ${
-                                globalRank === 1 ? 'text-yellow-500' :
-                                globalRank === 2 ? 'text-gray-300' :
-                                'text-amber-500'
+                                'bg-amber-600/10 border-amber-600 shadow-[0_0_15px_rgba(217,119,6,0.3)]'
                               }`}>
+                              <span className={`transform -rotate-45 font-black font-[family-name:var(--font-space)] text-sm ${globalRank === 1 ? 'text-yellow-500' :
+                                globalRank === 2 ? 'text-gray-300' :
+                                  'text-amber-500'
+                                }`}>
                                 {globalRank}
                               </span>
                             </div>
@@ -137,17 +134,16 @@ export default function GlobalLeaderboard() {
 
                         {/* Player Name */}
                         <div className="col-span-5 sm:col-span-7 truncate pr-2">
-                          <span className={`font-[family-name:var(--font-inter)] text-sm sm:text-lg tracking-wide transition-transform duration-300 inline-block sm:group-hover:translate-x-2 truncate w-full ${
-                            isTop3 ? 'font-bold text-white' : 'font-medium text-gray-300 group-hover:text-white'
-                          }`}>
-                            {entry.playerName}
+                          <span className={`font-[family-name:var(--font-inter)] text-sm sm:text-lg tracking-wide transition-transform duration-300 inline-block sm:group-hover:translate-x-2 truncate w-full ${isTop3 ? 'font-bold text-white' : 'font-medium text-gray-300 group-hover:text-white'
+                            }`}>
+                            {entry.username}
                           </span>
                         </div>
 
                         {/* Score */}
                         <div className="col-span-4 sm:col-span-3 text-right">
                           <span className="text-red-500 font-bold font-[family-name:var(--font-space)] text-sm sm:text-xl tracking-widest">
-                            {entry.score.toLocaleString()}
+                            {Number(entry.cumulativeScore ?? 0).toLocaleString()}
                           </span>
                         </div>
                       </div>
@@ -171,8 +167,8 @@ export default function GlobalLeaderboard() {
 
           <div className="flex gap-1">
             {[...Array(data?.totalPages || 1)].map((_, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={`w-8 h-1 transition-colors duration-300 ${page === i + 1 ? 'bg-red-600' : 'bg-white/10'}`}
               ></div>
             ))}

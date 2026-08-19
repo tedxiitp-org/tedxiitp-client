@@ -1,14 +1,15 @@
-"use client";
-import { motion } from "framer-motion";
+import type { Metadata } from "next";
 import Link from "next/link";
-import HeroHome from "@/src/features/components/home/heroHome";
-import BuyTickets from "../features/components/home/buyTickects";
-import AboutTheTheme from "../features/components/home/aboutTheTheme";
-import SpeakerHome from "../features/components/home/speakerhome";
-import MerchBanner from "../components/merch";
-import EventBanner from "../components/eventBanner";
-import TicketBanner from "../components/tickectsBanner";
 import ComingSoon from "../components/coming-soon/ComingSoon";
+
+export const metadata: Metadata = {
+  title: "TEDxIIT Patna | Home",
+  description:
+    "Official website of TEDxIIT Patna. Discovering, debating, and spreading ideas that spark conversation, deepen understanding, and drive meaningful change at IIT Patna.",
+  alternates: {
+    canonical: "https://tedxiitpatna.iitp.ac.in",
+  },
+};
 
 export default function IndexPage() {
   return (
