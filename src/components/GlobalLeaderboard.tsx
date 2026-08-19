@@ -95,7 +95,7 @@ export default function GlobalLeaderboard() {
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {data.data.map((entry, index) => {
+                  {(data?.data ?? []).map((entry, index) => {
                     const globalRank = (page - 1) * limit + index + 1;
                     const isTop3 = globalRank <= 3;
 
@@ -166,7 +166,8 @@ export default function GlobalLeaderboard() {
           </button>
 
           <div className="flex gap-1">
-            {[...Array(data?.totalPages || 1)].map((_, i) => (
+            {/* {[...Array(data?.totalPages || 1)].map((_, i) => ( */}
+            {Array.from({ length: Number(data?.totalPages ?? 1) }).map((_, i) => (
               <div
                 key={i}
                 className={`w-8 h-1 transition-colors duration-300 ${page === i + 1 ? 'bg-red-600' : 'bg-white/10'}`}

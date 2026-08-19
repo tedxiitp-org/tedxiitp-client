@@ -21,19 +21,19 @@ const spaceGrotesk = Space_Grotesk({
 
 // Original thumbnails from your code (excluding the first one which is spotlight by default)
 const FUNFAIR_PHOTOS: PolaroidPhoto[] = [
-  { id: 2, frameSrc: "/funfair/image3.png" },
-  { id: 3, frameSrc: "/funfair/image4.png" },
-  { id: 4, frameSrc: "/funfair/image 27.png" },
-  { id: 5, frameSrc: "/funfair/image1.png" },
-  { id: 6, frameSrc: "/funfair/image5.png" },
-  { id: 7, frameSrc: "/funfair/image.png" },
+  { id: 2, frameSrc: "/funfair/Group 48095539.png" },
+  { id: 3, frameSrc: "/funfair/Group 48095540.png" },
+  { id: 4, frameSrc: "/funfair/Group 48095541.png" },
+  { id: 5, frameSrc: "/funfair/Group 48095542.png" },
+  { id: 6, frameSrc: "/funfair/Group 48095543.png" },
+  { id: 7, frameSrc: "/funfair/Group 48095544.png" },
 ];
 
 export default function FunFairSection() {
   // 1. Separate the Spotlight image from the Thumbnails
   const [spotlight, setSpotlight] = useState<PolaroidPhoto>({ 
     id: 1, 
-    frameSrc: "/funfair/image2.png" 
+    frameSrc: "/funfair/Group 48095538.png" 
   });
 
   const [thumbnails, setThumbnails] = useState<PolaroidPhoto[]>(FUNFAIR_PHOTOS);

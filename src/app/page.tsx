@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import ComingSoon from "../components/coming-soon/ComingSoon";
+import HomeHero from "@/features/components/home/heroHome";
+import AboutTheTheme from "@/features/components/home/aboutTheTheme";
 
 export const metadata: Metadata = {
   title: "TEDxIIT Patna | Home",
@@ -22,7 +23,8 @@ export default function IndexPage() {
           Mario is out now play it!
         </Link>
       </div>
-      <ComingSoon/>
+      <HomeHero />
+      <AboutTheTheme />
     </div>
   );
 }
