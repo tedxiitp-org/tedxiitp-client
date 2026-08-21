@@ -49,7 +49,7 @@ export default function UpdateDialog() {
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
-        className="max-w-xl overflow-hidden border-red-600/30 bg-[#0e0e0e] p-0 text-white sm:max-w-3xl"
+        className="max-w-xl overflow-hidden border-red-600/30 bg-[#0e0e0e] p-0 text-white sm:max-w-4xl"
         showCloseButton={false}
       >
         {/* Close Button */}
@@ -64,26 +64,20 @@ export default function UpdateDialog() {
         {/* Glow effect */}
         <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-red-600/20 blur-3xl" />
 
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2">
-          {/* Left Section: Merch Image Container */}
-          <div className="relative flex flex-col justify-between border-b border-white/10 bg-gradient-to-br from-zinc-900 via-neutral-900 to-black p-5 md:border-b-0 md:border-r">
-            {/* Edge-to-edge container fitting the full image */}
-            <div className="relative my-auto aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/10 shadow-lg">
-              <Image
-                src="/T Shirt Both side copy.png"
-                alt="Official Merchandise"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            <p className="mt-3 text-center text-[10px] uppercase tracking-[0.25em] text-zinc-500">
-              Official Merchandise
-            </p>
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 md:items-stretch">
+          {/* Left Section: Full stretch cover to eliminate all surrounding black background */}
+          <div className="relative min-h-[300px] w-full bg-white md:min-h-full">
+            <Image
+              src="/T Shirt Both side copy.png"
+              alt="Official Merchandise"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-fill"
+              priority
+            />
           </div>
 
-          {/* Right Section: Details & Buy Button */}
+          {/* Right Section: Details & Action */}
           <div className="flex flex-col justify-between p-6 sm:p-8">
             <div>
               <DialogHeader className="p-0 text-left">
