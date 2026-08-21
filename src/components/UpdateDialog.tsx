@@ -21,6 +21,7 @@ interface Update {
   description: string;
   href: string;
   cta: string;
+  isExternal?: boolean;
 }
 
 const updates: Update[] = [
@@ -30,8 +31,9 @@ const updates: Update[] = [
     title: "Exclusive Merch Drop!",
     description:
       "New TEDxIIT Patna merchandise is here — limited edition tees, hoodies, and more.",
-    href: "/cart",
+    href: "https://docs.google.com/forms/d/e/1FAIpQLSeL1GKR58T-Amp8m1HBQcMEvyA-FsAFRA2-ZY0Zv70EmvV_jw/viewform",
     cta: "Shop Now",
+    isExternal: true,
   },
   {
     id: "event-oct",
@@ -41,6 +43,7 @@ const updates: Update[] = [
       "Registrations are open! Secure your spot for TEDxIIT Patna's flagship event.",
     href: "/events",
     cta: "Register",
+    isExternal: false,
   },
 ];
 
@@ -53,7 +56,6 @@ export default function UpdateDialog() {
       const now = Date.now();
 
       if (!lastVisit || now - Number(lastVisit) >= TWO_DAYS_MS) {
-        // Small delay so the page loads first before the dialog pops in
         const timer = setTimeout(() => setOpen(true), 1200);
         return () => clearTimeout(timer);
       }
@@ -128,6 +130,8 @@ export default function UpdateDialog() {
 
                     <Link
                       href={update.href}
+                      target={update.isExternal ? "_blank" : undefined}
+                      rel={update.isExternal ? "noopener noreferrer" : undefined}
                       onClick={() => handleClose(false)}
                       className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500"
                     >
