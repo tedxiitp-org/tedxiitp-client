@@ -7,42 +7,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "@/src/components/ui/dialog";
-import { ShoppingBag, CalendarDays, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const LAST_VISIT_KEY = "tedx_last_visit";
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
-
-interface Update {
-  id: string;
-  type: "merch" | "event";
-  title: string;
-  description: string;
-  href: string;
-  cta: string;
-}
-
-const updates: Update[] = [
-  {
-    id: "merch-live",
-    type: "merch",
-    title: "Exclusive Merch Drop!",
-    description:
-      "New TEDxIIT Patna merchandise is here — limited edition tees, hoodies, and more.",
-    href: "/cart",
-    cta: "Shop Now",
-  },
-  {
-    id: "event-oct",
-    type: "event",
-    title: "Event on 12 Oct 2026",
-    description:
-      "Registrations are open! Secure your spot for TEDxIIT Patna's flagship event.",
-    href: "/events",
-    cta: "Register",
-  },
-];
+const FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeL1GKR58T-Amp8m1HBQcMEvyA-FsAFRA2-ZY0Zv70EmvV_jw/viewform";
 
 export default function UpdateDialog() {
   const [open, setOpen] = useState(false);
@@ -53,12 +27,11 @@ export default function UpdateDialog() {
       const now = Date.now();
 
       if (!lastVisit || now - Number(lastVisit) >= TWO_DAYS_MS) {
-        // Small delay so the page loads first before the dialog pops in
         const timer = setTimeout(() => setOpen(true), 1200);
         return () => clearTimeout(timer);
       }
     } catch {
-      // localStorage unavailable (SSR / privacy mode) — silently skip
+      // localStorage unavailable (SSR / privacy mode)
     }
   }, []);
 
@@ -73,78 +46,70 @@ export default function UpdateDialog() {
     }
   }
 
-  const iconMap = {
-    merch: ShoppingBag,
-    event: CalendarDays,
-  };
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
-        className="max-w-md border-red-600/30 bg-[#0e0e0e] text-white sm:max-w-lg"
-        showCloseButton
+        className="max-w-xl overflow-hidden border-red-600/30 bg-[#0e0e0e] p-0 text-white sm:max-w-4xl"
+        showCloseButton={false}
       >
-        {/* Top decorative glow */}
+        {/* Close Button */}
+        <DialogClose
+          onClick={() => handleClose(false)}
+          className="absolute right-4 top-4 z-50 rounded-full bg-white/5 p-1.5 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white focus:outline-none"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DialogClose>
+
+        {/* Glow effect */}
         <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-red-600/20 blur-3xl" />
 
-        <DialogHeader className="relative z-10">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-red-600/20">
-              <Sparkles className="h-4 w-4 text-red-500" />
-            </span>
-            <DialogTitle className="text-lg font-bold text-white sm:text-xl">
-              What&rsquo;s New at TEDx
-            </DialogTitle>
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 md:items-stretch">
+          {/* Left Section: Full stretch cover to eliminate all surrounding black background */}
+          <div className="relative min-h-[300px] w-full bg-white md:min-h-full">
+            <Image
+              src="/T Shirt Both side copy.png"
+              alt="Official Merchandise"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-fill"
+              priority
+            />
           </div>
-          <DialogDescription className="text-sm text-zinc-400">
-            You&rsquo;ve been away — here&rsquo;s what you missed!
-          </DialogDescription>
-        </DialogHeader>
 
-        {/* Update cards */}
-        <div className="relative z-10 mt-2 flex flex-col gap-3">
-          {updates.map((update) => {
-            const Icon = iconMap[update.type];
-            return (
-              <div
-                key={update.id}
-                className="group relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.03] p-4 transition-colors duration-200 hover:border-red-600/30 hover:bg-white/[0.06]"
-              >
-                {/* Accent bar */}
-                <div className="absolute left-0 top-0 h-full w-[3px] rounded-l-xl bg-red-600 opacity-0 transition-opacity group-hover:opacity-100" />
+          {/* Right Section: Details & Action */}
+          <div className="flex flex-col justify-between p-6 sm:p-8">
+            <div>
+              <DialogHeader className="p-0 text-left">
+                <DialogTitle className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+                  Exclusive Merch Drop
+                </DialogTitle>
+                <DialogDescription className="mt-2 text-sm leading-relaxed text-zinc-400">
+                  Grab the official edition t-shirts and exclusive merchandise before stocks run out.
+                </DialogDescription>
+              </DialogHeader>
 
-                <div className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-600/10">
-                    <Icon className="h-4 w-4 text-red-500" />
-                  </span>
-
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">
-                      {update.title}
-                    </p>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-400">
-                      {update.description}
-                    </p>
-
-                    <Link
-                      href={update.href}
-                      onClick={() => handleClose(false)}
-                      className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500"
-                    >
-                      {update.cta}
-                      <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
+              <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/5 p-3.5">
+                <p className="text-xs font-medium text-red-200">
+                  ⚡ Early bird live now. Fill the form to reserve yours.
+                </p>
               </div>
-            );
-          })}
-        </div>
+            </div>
 
-        {/* Bottom subtle branding */}
-        <p className="relative z-10 mt-1 text-center text-[10px] uppercase tracking-[0.25em] text-zinc-600">
-          TEDxIIT Patna
-        </p>
+            <div className="mt-8">
+              <Link
+                href={FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleClose(false)}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:bg-red-500 hover:shadow-red-600/30 active:scale-[0.99]"
+              >
+                <span>Buy Merchandise</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
