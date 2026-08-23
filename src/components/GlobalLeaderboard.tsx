@@ -101,7 +101,7 @@ export default function GlobalLeaderboard() {
 
                     return (
                       <div
-                        key={entry.userId}
+                        key={`${entry.userId}-${index}`}
                         className={`group grid grid-cols-12 gap-2 sm:gap-4 items-center px-3 sm:px-6 py-4 border-b border-white/5 transition-all duration-300 relative overflow-hidden cursor-default ${globalRank === 1 ? 'bg-gradient-to-r from-yellow-500/10 to-transparent' :
                           globalRank === 2 ? 'bg-gradient-to-r from-gray-300/10 to-transparent' :
                             globalRank === 3 ? 'bg-gradient-to-r from-amber-600/10 to-transparent' :
