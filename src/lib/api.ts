@@ -340,7 +340,9 @@ export interface GlobalLeaderboardResponse {
 }
 
 export async function registerUser(username: string): Promise<any> {
-  return request("/api/games/register", { method: "POST", body: JSON.stringify({ username }) }).catch(() => ({ success: true }));
+  return request<any>("/api/v1/users/identity", { method: "POST", body: JSON.stringify({ username }) })
+    .then((res) => ({ data: res }))
+    .catch((err) => ({ error: err?.message || "Failed to register user. Please try again." }));
 }
 
 export async function submitScore(gameId: string, userId: string, score: number): Promise<any> {
