@@ -97,10 +97,12 @@ export interface BulkAttendee {
   email: string;
   transactionId: string;
   name?: string;
+  session: Session | "UNRECOGNIZED";
 }
 
 export interface BulkGenerateResult {
   email: string;
+  session: string;
   status: "generated" | "duplicate" | "error";
   ticketId?: string;
   emailSent?: boolean;
@@ -108,8 +110,7 @@ export interface BulkGenerateResult {
 }
 
 export function generateTicketsBulk(
-  attendees: BulkAttendee[],
-  session: Session
+  attendees: BulkAttendee[]
 ) {
   return request<{
     success: boolean;
@@ -117,8 +118,28 @@ export function generateTicketsBulk(
     jobId: string;
   }>("/api/qr/generate-bulk", {
     method: "POST",
-    body: JSON.stringify({ attendees, session }),
+    body: JSON.stringify({ attendees }),
   });
+}
+
+export interface CheckDuplicatePayload {
+  email: string;
+  transactionId: string;
+  session: Session | "UNRECOGNIZED";
+}
+
+export interface CheckDuplicateResponse {
+  email: string;
+  session: string;
+  exists: boolean;
+  reason?: string;
+}
+
+export function checkDuplicates(items: CheckDuplicatePayload[]) {
+  return request<{ success: boolean; data: CheckDuplicateResponse[] }>(
+    "/api/qr/admin/ticket/check-duplicates",
+    { method: "POST", body: JSON.stringify({ items }) }
+  );
 }
 
 export interface BulkJobStatusResponse {
@@ -308,9 +329,9 @@ export async function validateScan(
 
 // ---- Games ----
 export interface LeaderboardEntry {
-  id: string;
-  playerName: string;
-  score: number;
+  userId: string;
+  username: string;
+  cumulativeScore: number;
 }
 
 export interface GlobalLeaderboardResponse {
@@ -319,15 +340,23 @@ export interface GlobalLeaderboardResponse {
 }
 
 export async function registerUser(username: string): Promise<any> {
-  return request("/api/games/register", { method: "POST", body: JSON.stringify({ username }) }).catch(() => ({ success: true }));
+  return request<any>("/api/v1/users/identity", { method: "POST", body: JSON.stringify({ username }) })
+    .then((res) => ({ data: res }))
+    .catch((err) => ({ error: err?.message || "Failed to register user. Please try again." }));
 }
 
 export async function submitScore(gameId: string, userId: string, score: number): Promise<any> {
-  return request(`/api/v1/games/${gameId}/submit-stats`, { method: "POST", body: JSON.stringify({ userId, score }) }).catch(() => ({ success: true }));
+  return request(`/api/v1/games/${gameId}/submit-stats`, { method: "POST", body: JSON.stringify({ userId, rawScore: score, timeTaken: score }) })
+    .catch((err) => {
+      console.error("Score submission error:", err);
+      throw err;
+    });
 }
 
 export async function fetchLeaderboard(gameId: string): Promise<LeaderboardEntry[]> {
-  return request<LeaderboardEntry[]>("/api/v1/leaderboard/" + gameId).catch(() => []);
+  return request<{ data: LeaderboardEntry[] }>("/api/v1/leaderboard/" + gameId)
+    .then((res) => res.data)
+    .catch(() => []);
 }
 
 export async function fetchGlobalLeaderboard(page: number, limit: number): Promise<GlobalLeaderboardResponse> {
