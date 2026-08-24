@@ -731,6 +731,11 @@
             document.getElementById('finalScore').innerText = score;
             document.getElementById('finalHighScore').innerText = highScore;
             document.getElementById('finalCoins').innerText = coins;
+            
+            // Post score to the parent window
+            if (window.parent) {
+                window.parent.postMessage({ type: 'GAME_OVER', game: 'surf', score: score }, '*');
+            }
         }
 
         function checkCollisions() {
