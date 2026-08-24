@@ -39,14 +39,14 @@ export default function MarioGamePage() {
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
       // Security: You might want to verify origin here
-      if (event.data && event.data.type === 'GAME_OVER' && event.data.game === 'mario') {
+      if (event.data && event.data.type === 'GAME_OVER' && event.data.game === 'surf') {
         const score = event.data.score;
         // Get userId and username from localStorage (set in the /games page modal)
         const userId = localStorage.getItem('tedx_userid');
         const playerName = localStorage.getItem('tedx_username') || "Anonymous";
         
         if (userId) {
-          await submitScore('mario', userId, score);
+          await submitScore('surf', userId, score);
           console.log(`Score of ${score} submitted for ${playerName}`);
         } else {
           console.error('User ID not found. Score not submitted.');

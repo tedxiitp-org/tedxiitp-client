@@ -97,10 +97,12 @@ export interface BulkAttendee {
   email: string;
   transactionId: string;
   name?: string;
+  session: Session | "UNRECOGNIZED";
 }
 
 export interface BulkGenerateResult {
   email: string;
+  session: string;
   status: "generated" | "duplicate" | "error";
   ticketId?: string;
   emailSent?: boolean;
@@ -108,16 +110,15 @@ export interface BulkGenerateResult {
 }
 
 export function generateTicketsBulk(
-  attendees: BulkAttendee[],
-  session: Session
+  attendees: BulkAttendee[]
 ) {
   return request<{
     success: boolean;
     message: string;
-    data: BulkGenerateResult[];
+    jobId: string;
   }>("/api/qr/generate-bulk", {
     method: "POST",
-    body: JSON.stringify({ attendees, session }),
+    body: JSON.stringify({ attendees }),
   });
 }
 
