@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Endless Sail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0d47a1; /* Classic Surf-style ocean blue */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* UI Overlays */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hud {
+            display: none;
+            justify-content: space-between;
+            padding: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hud-left { display: flex; gap: 20px; }
+        .hud-right { display: flex; gap: 20px; align-items: center; }
+
+        .coin-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #ffd700;
+            border-radius: 50%;
+            border: 3px solid #b8860b;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        /* Menus */
+        .menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            pointer-events: auto;
+            min-width: 300px;
+        }
+
+        #game-over-menu { display: none; }
+
+        h1 {
+            color: #0277bd;
+            margin-bottom: 20px;
+            font-size: 36px;
+        }
+
+        h2 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        button {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        button:hover { background: #0277bd; transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="ui-layer">
+        <div class="hud" id="hud">
+            <div class="hud-left">
+                <div id="scoreDisplay">0m</div>
+                <div id="highScoreDisplay" style="color: #b3e5fc; font-size: 18px; align-self: flex-end; padding-bottom: 2px;">HI: 0m</div>
+            </div>
+            <div class="hud-right">
+                <div><span class="coin-icon"></span><span id="coinDisplay">0</span></div>
+            </div>
+        </div>
+
+        <div class="menu" id="main-menu">
+            <h1>Endless Sail</h1>
+            <p style="margin-bottom: 20px; color: #555;">Use Left/Right Arrows or Touch to steer.</p>
+            <button onclick="startGame()">SAIL NOW</button>
+        </div>
+
+        <div class="menu" id="game-over-menu">
+            <h2>Shipwrecked!</h2>
+            <div class="stats">
+                <div>Distance: <strong id="finalScore">0</strong>m</div>
+                <div>Best: <strong id="finalHighScore">0</strong>m</div>
+                <div>Coins: <strong id="finalCoins">0</strong></div>
+            </div>
+            <button onclick="startGame()">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI Elements
+        const hud = document.getElementById('hud');
+        const mainMenu = document.getElementById('main-menu');
+        const gameOverMenu = document.getElementById('game-over-menu');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const highScoreDisplay = document.getElementById('highScoreDisplay');
+        const coinDisplay = document.getElementById('coinDisplay');
+
+        // Game State
+        let gameState = 'menu'; // menu, playing, gameover
+        let score = 0;
+        let coins = 0;
+        let highScore = localStorage.getItem('sailHighScore') || 0;
+        let totalCoins = localStorage.getItem('sailTotalCoins') || 0;
+        
+        let baseSpeed = 5;
+        let currentSpeed = 0;
+        let distanceTraveled = 0;
+        let frames = 0;
+
+        // Delta-time normalization so speed/difficulty feel identical
+        // on a 60Hz phone, a 120Hz phone, or any desktop refresh rate.
+        const FRAME_MS = 1000 / 60; // baseline: "1 frame" = 1/60th of a second
+        let lastTimestamp = null;
+        let obstacleTimer = 0;
+        let obstacleTimer2 = 0;
+        let coinTimer = 0;
+        let hudTimer = 0;
+
+        // Entities
+        let boat;
+        let obstacles = [];
+        let collectibles = [];
+        let particles = [];
+        let waves = [];
+
+        // Input
+        const keys = { ArrowLeft: false, ArrowRight: false, a: false, d: false };
+        let touchX = null;
+
+        // Resize Canvas
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if(gameState === 'menu') initWaves();
+        }
+        window.addEventListener('resize', resize);
+        
+        // --- CLASSES ---
+
+        class Boat {
+            constructor() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height * 0.7; // Fixed height, angled top-down
+                this.width = 40;
+                this.height = 80;
+                this.vx = 0;
+                this.speed = 0.5;
+                this.friction = 0.92;
+                this.angle = 0;
+                this.radius = 20; // For collisions
+                this.wakeTimer = 0;
+            }
+
+            // dt = elapsed time normalized to 60fps units (1 at 60Hz, 0.5 at 120Hz, 2 at 30Hz)
+            // deltaTime = real elapsed milliseconds since last frame
+            update(dt, deltaTime) {
+                // Input handling (scaled by dt so turn rate is the same regardless of refresh rate)
+                if (keys.ArrowLeft || keys.a) this.vx -= this.speed * dt;
+                if (keys.ArrowRight || keys.d) this.vx += this.speed * dt;
+                
+                // Touch handling
+                if (touchX !== null) {
+                    if (touchX < this.x - 10) this.vx -= this.speed * dt;
+                    if (touchX > this.x + 10) this.vx += this.speed * dt;
+                }
+
+                // Physics (Math.pow keeps the friction decay identical over real time, not per-frame)
+                this.vx *= Math.pow(this.friction, dt);
+                this.x += this.vx * dt;
+
+                // Screen bounds
+                if (this.x < this.width/2) {
+                    this.x = this.width/2;
+                    this.vx = 0;
+                }
+                if (this.x > canvas.width - this.width/2) {
+                    this.x = canvas.width - this.width/2;
+                    this.vx = 0;
+                }
+
+                // Tilt based on momentum
+                this.angle = this.vx * 0.05;
+
+                // Generate wake particles at a fixed real-time rate
+                this.wakeTimer += deltaTime;
+                const wakeInterval = 3 * FRAME_MS;
+                while (this.wakeTimer >= wakeInterval) {
+                    this.wakeTimer -= wakeInterval;
+                    particles.push(new Particle(this.x - 10, this.y + this.height/2));
+                    particles.push(new Particle(this.x + 10, this.y + this.height/2));
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+
+                // Hull
+                ctx.fillStyle = '#8d6e63';
+                ctx.beginPath();
+                ctx.moveTo(0, -this.height/2); // Bow
+                ctx.lineTo(this.width/2, -this.height/4);
+                ctx.lineTo(this.width/2, this.height/2); // Stern right
+                ctx.lineTo(-this.width/2, this.height/2); // Stern left
+                ctx.lineTo(-this.width/2, -this.height/4);
+                ctx.closePath();
+                ctx.fill();
+
+                // Deck interior
+                ctx.fillStyle = '#5d4037';
+                ctx.beginPath();
+                ctx.moveTo(0, -this.height/2 + 10);
+                ctx.lineTo(this.width/2 - 5, -this.height/4 + 5);
+                ctx.lineTo(this.width/2 - 5, this.height/2 - 5);
+                ctx.lineTo(-this.width/2 + 5, this.height/2 - 5);
+                ctx.lineTo(-this.width/2 + 5, -this.height/4 + 5);
+                ctx.fill();
+
+                // Sail (reacts to movement)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                // Curve sail based on velocity
+                let sailCurve = this.vx * 2; 
+                ctx.moveTo(0, -this.height/2 + 15); // Top of mast
+                ctx.quadraticCurveTo(this.width + sailCurve, 0, this.width/2 + 10, this.height/2 - 10); // Bottom right
+                ctx.lineTo(-this.width/2 - 10, this.height/2 - 10); // Bottom left
+                ctx.closePath();
+                ctx.fill();
+                
+                // Mast
+                ctx.fillStyle = '#3e2723';
+                ctx.fillRect(-2, -this.height/2 + 10, 4, this.height - 20);
+
+                ctx.restore();
+            }
+        }
+
+        class Obstacle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -100; // Start higher off-screen to account for larger island sizes
+                this.frameOffset = Math.random() * 200;
+                this.swayAmount = 0;
+                this.swaySpeed = 0;
+
+                // Randomize obstacle type (weighted) - all themed around uncharted, mysterious waters
+                let rand = Math.random();
+                if (rand > 0.93) {
+                    this.type = 'island';
+                    this.radius = Math.random() * 30 + 45; // Huge fog-shrouded isle
+                } else if (rand > 0.86) {
+                    this.type = 'ruins';
+                    this.radius = Math.random() * 20 + 40; // Ring of sunken temple stones
+                } else if (rand > 0.74) {
+                    this.type = 'ghostship';
+                    this.radius = Math.random() * 10 + 30; // Derelict wreck
+                    this.angleFixed = Math.random() * Math.PI;
+                } else if (rand > 0.58) {
+                    this.type = 'reef';
+                    this.radius = Math.random() * 12 + 22; // Bioluminescent coral maze
+                } else if (rand > 0.44) {
+                    this.type = 'monolith';
+                    this.radius = Math.random() * 10 + 20; // Carved standing stone
+                } else if (rand > 0.32) {
+                    this.type = 'kraken';
+                    this.radius = Math.random() * 8 + 24; // Tentacle breaking the surface
+                    this.swayAmount = Math.random() * 0.8 + 0.4;
+                    this.swaySpeed = Math.random() * 0.03 + 0.02;
+                } else if (rand > 0.18) {
+                    this.type = 'totem';
+                    this.radius = 16; // Warding totem marking uncharted danger
+                    this.swayAmount = Math.random() * 0.6 + 0.3;
+                    this.swaySpeed = Math.random() * 0.05 + 0.03;
+                } else {
+                    this.type = 'driftwood';
+                    this.radius = 20; // Broken mast / driftwood
+                }
+            }
+
+            update(dt) {
+                this.y += currentSpeed * dt;
+                if (this.swayAmount) {
+                    this.x += Math.sin((frames + this.frameOffset) * this.swaySpeed) * this.swayAmount * dt;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                if (this.type === 'island') {
+                    // Fog-shrouded uncharted isle
+                    ctx.fillStyle = '#6d5f4a';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Dense, dark jungle canopy
+                    ctx.fillStyle = '#1e5941';
+                    ctx.beginPath();
+                    ctx.arc(0, -this.radius * 0.15, this.radius * 0.7, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#134030';
+                    ctx.beginPath();
+                    ctx.arc(this.radius * 0.15, -this.radius * 0.05, this.radius * 0.35, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // A crumbling stone ruin peeking through the canopy
+                    let ruinY = -this.radius * 0.35;
+                    ctx.fillStyle = '#9c9284';
+                    ctx.fillRect(-6, ruinY - this.radius * 0.5, 12, this.radius * 0.5);
+                    ctx.fillStyle = '#7d7468';
+                    ctx.beginPath();
+                    ctx.moveTo(-9, ruinY - this.radius * 0.5);
+                    ctx.lineTo(0, ruinY - this.radius * 0.72);
+                    ctx.lineTo(9, ruinY - this.radius * 0.5);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Drifting mist over the isle
+                    ctx.fillStyle = 'rgba(220, 230, 225, 0.25)';
+                    ctx.beginPath();
+                    ctx.ellipse(this.radius * 0.2, this.radius * 0.1, this.radius * 0.9, this.radius * 0.35, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                } else if (this.type === 'ruins') {
+                    // Ring of sunken temple stones around a glowing rune pool
+                    ctx.fillStyle = '#8a7f6e';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#4a4438';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius * 0.78, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Standing stones spaced around the ring
+                    ctx.fillStyle = '#c9c0ae';
+                    for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+                        let px = Math.cos(a) * this.radius * 0.88;
+                        let py = Math.sin(a) * this.radius * 0.88;
+                        ctx.save();
+                        ctx.translate(px, py);
+                        ctx.rotate(a);
+                        ctx.fillRect(-4, -10, 8, 20);
+                        ctx.restore();
+                    }
+
+                    // Glowing violet rune pool at the center
+                    let pulse = 0.5 + Math.sin((frames + this.frameOffset) * 0.05) * 0.2;
+                    ctx.fillStyle = `rgba(155, 89, 182, ${pulse})`;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius * 0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = `rgba(214, 137, 244, ${pulse + 0.2})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius * 0.4, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                } else if (this.type === 'ghostship') {
+                    ctx.rotate(this.angleFixed);
+                    // Pale, weathered wreck hull with an eerie glow
+                    let glow = 0.15 + Math.sin((frames + this.frameOffset) * 0.04) * 0.08;
+                    ctx.shadowColor = `rgba(160, 220, 210, ${glow + 0.3})`;
+                    ctx.shadowBlur = 15;
+
+                    ctx.fillStyle = '#5c6660';
+                    ctx.beginPath();
+                    ctx.moveTo(-this.radius, -this.radius * 0.4);
+                    ctx.lineTo(this.radius * 0.8, -this.radius * 0.6);
+                    ctx.lineTo(this.radius, this.radius * 0.3);
+                    ctx.lineTo(-this.radius * 0.6, this.radius * 0.6);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    // Cracked, rotting planks
+                    ctx.strokeStyle = '#2f3733';
+                    ctx.lineWidth = 2;
+                    for (let i = -1; i <= 1; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(-this.radius * 0.7, i * this.radius * 0.25);
+                        ctx.lineTo(this.radius * 0.7, i * this.radius * 0.25 + 5);
+                        ctx.stroke();
+                    }
+
+                    // Broken mast
+                    ctx.strokeStyle = '#38423d';
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(this.radius * 0.5, -this.radius * 1.4);
+                    ctx.stroke();
+
+                    // Tattered ghostly sail
+                    ctx.fillStyle = 'rgba(210, 225, 220, 0.55)';
+                    ctx.beginPath();
+                    ctx.moveTo(this.radius * 0.5, -this.radius * 1.4);
+                    ctx.lineTo(this.radius * 0.95, -this.radius * 1.1);
+                    ctx.lineTo(this.radius * 0.5, -this.radius * 0.9);
+                    ctx.closePath();
+                    ctx.fill();
+
+                } else if (this.type === 'reef') {
+                    // Bioluminescent coral maze - deep sea purples and teals
+                    let colors = ['#6c5ce7', '#00cec9', '#a29bfe'];
+                    ctx.fillStyle = '#2d3561';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius * 0.6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    for (let i = 0; i < 6; i++) {
+                        let a = (i / 6) * Math.PI * 2;
+                        let px = Math.cos(a) * this.radius * 0.55;
+                        let py = Math.sin(a) * this.radius * 0.55;
+                        let glowPulse = 0.7 + Math.sin((frames + this.frameOffset + i * 20) * 0.08) * 0.3;
+                        ctx.save();
+                        ctx.globalAlpha = glowPulse;
+                        ctx.fillStyle = colors[i % colors.length];
+                        ctx.beginPath();
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(px + Math.cos(a) * this.radius * 0.6, py + Math.sin(a) * this.radius * 0.6);
+                        ctx.lineTo(px + Math.cos(a + 0.5) * this.radius * 0.25, py + Math.sin(a + 0.5) * this.radius * 0.25);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.restore();
+                    }
+
+                } else if (this.type === 'monolith') {
+                    // Ancient carved standing stone with a glowing symbol
+                    ctx.fillStyle = '#5b5a56';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#787670';
+                    ctx.beginPath();
+                    ctx.arc(-this.radius * 0.2, -this.radius * 0.2, this.radius / 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Glowing carved rune on the face
+                    let runePulse = 0.6 + Math.sin((frames + this.frameOffset) * 0.06) * 0.3;
+                    ctx.strokeStyle = `rgba(241, 196, 15, ${runePulse})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -this.radius * 0.4);
+                    ctx.lineTo(this.radius * 0.3, 0);
+                    ctx.lineTo(0, this.radius * 0.4);
+                    ctx.lineTo(-this.radius * 0.3, 0);
+                    ctx.closePath();
+                    ctx.stroke();
+
+                } else if (this.type === 'kraken') {
+                    // Kraken tentacle breaking the surface
+                    ctx.fillStyle = '#3d2c52';
+                    ctx.beginPath();
+                    ctx.moveTo(-this.radius * 0.35, this.radius * 0.9);
+                    ctx.quadraticCurveTo(-this.radius * 0.6, 0, -this.radius * 0.1, -this.radius * 1.3);
+                    ctx.quadraticCurveTo(this.radius * 0.15, -this.radius * 1.5, this.radius * 0.3, -this.radius * 1.2);
+                    ctx.quadraticCurveTo(this.radius * 0.05, -this.radius * 0.9, this.radius * 0.35, this.radius * 0.85);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Suckers running along the tentacle
+                    ctx.fillStyle = '#2a1e3d';
+                    for (let i = 0; i < 5; i++) {
+                        let t = i / 4;
+                        let sx = -this.radius * 0.35 + t * this.radius * 0.55;
+                        let sy = this.radius * 0.7 - t * this.radius * 2.0;
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Ripples where it breaks the surface
+                    ctx.strokeStyle = 'rgba(200, 220, 255, 0.4)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(0, this.radius * 0.8, this.radius * 0.9, this.radius * 0.3, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                } else if (this.type === 'totem') {
+                    // Carved warding totem, bobbing, with a glowing eye
+                    let bob = Math.sin((frames + this.frameOffset) * 0.1) * 3;
+                    ctx.translate(0, bob);
+
+                    ctx.fillStyle = '#4a3728';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -this.radius);
+                    ctx.lineTo(this.radius * 0.7, 0);
+                    ctx.lineTo(this.radius * 0.7, this.radius * 0.6);
+                    ctx.lineTo(-this.radius * 0.7, this.radius * 0.6);
+                    ctx.lineTo(-this.radius * 0.7, 0);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Carved band
+                    ctx.fillStyle = '#2f2318';
+                    ctx.fillRect(-this.radius * 0.7, -this.radius * 0.1, this.radius * 1.4, this.radius * 0.25);
+
+                    // Glowing warning eye
+                    let eyePulse = 0.6 + Math.sin((frames + this.frameOffset) * 0.15) * 0.4;
+                    ctx.fillStyle = `rgba(231, 76, 60, ${eyePulse})`;
+                    ctx.beginPath();
+                    ctx.arc(0, -this.radius - 3, 4, 0, Math.PI * 2);
+                    ctx.fill();
+
+                } else {
+                    // Driftwood / broken mast with tattered rope
+                    ctx.fillStyle = '#4a3b30';
+                    ctx.rotate(0.5);
+                    ctx.fillRect(-10, -30, 20, 60);
+
+                    ctx.fillStyle = '#3a2d24';
+                    ctx.fillRect(-10, -30, 5, 60);
+
+                    // Frayed rope wrapped around it
+                    ctx.strokeStyle = '#8d7a5c';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -10);
+                    ctx.lineTo(10, -4);
+                    ctx.moveTo(-10, 10);
+                    ctx.lineTo(10, 16);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        class Coin {
+            constructor() {
+                this.x = Math.random() * (canvas.width - 100) + 50;
+                this.y = -30;
+                this.radius = 15;
+                this.frameOffset = Math.random() * 100;
+            }
+
+            update(dt) {
+                this.y += currentSpeed * dt;
+            }
+
+            draw() {
+                // Bobbing animation
+                let bob = Math.sin((frames + this.frameOffset) * 0.1) * 5;
+                
+                ctx.save();
+                ctx.translate(this.x, this.y + bob);
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#b8860b';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Inner detail
+                ctx.fillStyle = '#daa520';
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius - 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x + (Math.random() * 10 - 5);
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = currentSpeed * 0.5; // Move down with the water
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.02;
+                this.size = Math.random() * 4 + 2;
+            }
+
+            update(dt) {
+                this.x += this.vx * dt;
+                this.y += this.vy * dt;
+                this.life -= this.decay * dt;
+                this.size += 0.1 * dt;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Ambient background waves
+        function initWaves() {
+            waves = [];
+            for(let i=0; i<30; i++) {
+                waves.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    width: Math.random() * 50 + 20,
+                    speed: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        function drawWaves(dt) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            
+            waves.forEach(w => {
+                w.y += currentSpeed * w.speed * dt;
+                if (w.y > canvas.height) {
+                    w.y = -20;
+                    w.x = Math.random() * canvas.width;
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(w.x, w.y);
+                ctx.quadraticCurveTo(w.x + w.width/2, w.y + 10, w.x + w.width, w.y);
+                ctx.stroke();
+            });
+        }
+
+        // --- CORE LOGIC ---
+
+        function startGame() {
+            gameState = 'playing';
+            mainMenu.style.display = 'none';
+            gameOverMenu.style.display = 'none';
+            hud.style.display = 'flex';
+            
+            boat = new Boat();
+            obstacles = [];
+            collectibles = [];
+            particles = [];
+            
+            score = 0;
+            coins = 0;
+            distanceTraveled = 0;
+            baseSpeed = 5;
+            currentSpeed = baseSpeed;
+            frames = 0;
+            lastTimestamp = null; // avoid a big dt jump on the first frame after (re)start
+            obstacleTimer = 0;
+            obstacleTimer2 = 0;
+            coinTimer = 0;
+            hudTimer = 0;
+            
+            highScoreDisplay.innerText = `HI: ${highScore}m`;
+            updateHUD();
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            hud.style.display = 'none';
+            gameOverMenu.style.display = 'block';
+            
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('sailHighScore', highScore);
+            }
+            totalCoins = parseInt(totalCoins) + coins;
+            localStorage.setItem('sailTotalCoins', totalCoins);
+
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalHighScore').innerText = highScore;
+            document.getElementById('finalCoins').innerText = coins;
+            
+            // Post score to the parent window
+            if (window.parent) {
+                window.parent.postMessage({ type: 'GAME_OVER', game: 'surf', score: score }, '*');
+            }
+        }
+
+        function checkCollisions() {
+            // Obstacles
+            for (let obs of obstacles) {
+                let dx = boat.x - obs.x;
+                let dy = boat.y - obs.y;
+                let distance = Math.hypot(dx, dy);
+                if (distance < boat.radius + obs.radius - 5) {
+                    // Create crash splash
+                    for(let i=0; i<20; i++) particles.push(new Particle(boat.x, boat.y));
+                    gameOver();
+                    return;
+                }
+            }
+
+            // Coins
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                let coin = collectibles[i];
+                let dx = boat.x - coin.x;
+                let dy = boat.y - coin.y;
+                if (Math.hypot(dx, dy) < boat.radius + coin.radius + 10) { // +10 for generous pickup radius (magnet feel)
+                    coins++;
+                    collectibles.splice(i, 1);
+                    updateHUD();
+                }
+            }
+        }
+
+        function updateHUD() {
+            scoreDisplay.innerText = `${score}m`;
+            coinDisplay.innerText = coins;
+        }
+
+        function loop(timestamp) {
+            // --- Delta-time setup ---
+            // requestAnimationFrame gives us a real timestamp (ms). We use it to
+            // measure real elapsed time between frames instead of assuming a fixed
+            // 60fps, so a 120Hz phone and a 60Hz laptop play at the exact same speed.
+            if (lastTimestamp === null) lastTimestamp = timestamp;
+            let deltaTime = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+            // Clamp to avoid huge jumps (e.g. switching tabs, breakpoint, lag spike)
+            deltaTime = Math.min(deltaTime, 100);
+            // dt = 1 at a perfect 60fps. dt = 0.5 at 120fps. dt = 2 at 30fps.
+            let dt = deltaTime / FRAME_MS;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Ocean Background
+            ctx.fillStyle = '#1e88e5'; // Classic Surf-style ocean blue
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawWaves(dt);
+
+            if (gameState === 'playing') {
+                frames += dt;
+                
+                // Difficulty Scaling
+                currentSpeed = baseSpeed + (score / 500);
+                distanceTraveled += currentSpeed * dt;
+                score = Math.floor(distanceTraveled / 50);
+
+                hudTimer += deltaTime;
+                if (hudTimer >= 10 * FRAME_MS) {
+                    hudTimer -= 10 * FRAME_MS;
+                    updateHUD();
+                }
+
+                // Spawning Logic (all timer-based in real ms, so spawn rate is
+                // identical in obstacles-per-second on every device)
+                // Spawn Obstacles (Density increases with score, starts busier and ramps faster)
+                let spawnRateFrames = Math.max(14, 65 - Math.floor(score / 25));
+                let spawnIntervalMs = spawnRateFrames * FRAME_MS;
+
+                obstacleTimer += deltaTime;
+                while (obstacleTimer >= spawnIntervalMs) {
+                    obstacleTimer -= spawnIntervalMs;
+                    obstacles.push(new Obstacle());
+                }
+
+                // Occasionally spawn a second obstacle in the same wave once things get hectic
+                if (score > 100) {
+                    obstacleTimer2 += deltaTime;
+                    while (obstacleTimer2 >= spawnIntervalMs) {
+                        obstacleTimer2 -= spawnIntervalMs;
+                        if (Math.random() > 0.6) obstacles.push(new Obstacle());
+                    }
+                }
+
+                // Spawn Coins
+                let coinIntervalMs = 95 * FRAME_MS;
+                coinTimer += deltaTime;
+                while (coinTimer >= coinIntervalMs) {
+                    coinTimer -= coinIntervalMs;
+                    if (Math.random() > 0.25) collectibles.push(new Coin());
+                }
+
+                boat.update(dt, deltaTime);
+                checkCollisions();
+            }
+
+            if (gameState !== 'menu') {
+                // Update & Draw Collectibles
+                for (let i = collectibles.length - 1; i >= 0; i--) {
+                    collectibles[i].update(dt);
+                    collectibles[i].draw();
+                    if (collectibles[i].y > canvas.height + 50) collectibles.splice(i, 1);
+                }
+
+                // Update & Draw Obstacles
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    obstacles[i].update(dt);
+                    obstacles[i].draw();
+                    if (obstacles[i].y > canvas.height + 50) obstacles.splice(i, 1);
+                }
+
+                // Update & Draw Wake Particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    particles[i].update(dt);
+                    particles[i].draw();
+                    if (particles[i].life <= 0) particles.splice(i, 1);
+                }
+
+                if(gameState === 'playing') boat.draw();
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        // --- INPUT LISTENERS ---
+        window.addEventListener('keydown', (e) => {
+            if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
+        });
+        window.addEventListener('keyup', (e) => {
+            if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
+        });
+
+        // Touch handling (Drag to steer)
+        window.addEventListener('touchstart', (e) => {
+            touchX = e.touches[0].clientX;
+        });
+        window.addEventListener('touchmove', (e) => {
+            touchX = e.touches[0].clientX;
+        });
+        window.addEventListener('touchend', () => {
+            touchX = null;
+        });
+
+        // Init
+        resize();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
