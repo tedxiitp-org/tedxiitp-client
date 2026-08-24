@@ -26,11 +26,11 @@ const games = [
   },
   {
     id: "game3",
-    title: "Coming Soon",
-    description: "More fun awaits.",
-    thumbnail: "/placeholder-game.jpg",
-    href: "#",
-    active: false,
+    title: "Endless Sail",
+    description: "Ready to explore the unexplored!!",
+    thumbnail: "/surf.png",
+    href: "/games/surf",
+    active: true,
   },
   {
     id: "game4",
