@@ -10,7 +10,7 @@ export default function MarioGamePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const router = useRouter();
-  
+
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [gameOverData, setGameOverData] = useState<{score: number, show: boolean} | null>(null);
 
@@ -36,15 +36,55 @@ export default function MarioGamePage() {
     }
   }, [router]);
 
+  // Locks/unlocks the OUTER page's scroll based on messages from the game iframe.
+  // This is necessary because the game's own document has nothing scrollable
+  // (overflow: hidden), so on iOS a touch-drag gesture over the iframe can
+  // "chain" out of the frame and scroll the parent page instead. Plain
+  // overflow:hidden on body doesn't reliably stop this on iOS Safari — using
+  // position: fixed on body is the technique that actually holds.
+  const lockBodyScroll = () => {
+    const scrollY = window.scrollY;
+    document.body.dataset.scrollY = String(scrollY);
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+  };
+
+  const unlockBodyScroll = () => {
+    const y = document.body.dataset.scrollY || '0';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
+    delete document.body.dataset.scrollY;
+    window.scrollTo(0, parseInt(y, 10));
+  };
+
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
+      if (event.data?.type === 'GAME_STATE' && event.data.game === 'surf') {
+        if (event.data.state === 'playing') {
+          lockBodyScroll();
+        } else {
+          unlockBodyScroll();
+        }
+        return;
+      }
+
       // Security: You might want to verify origin here
       if (event.data && event.data.type === 'GAME_OVER' && event.data.game === 'surf') {
         const score = event.data.score;
         // Get userId and username from localStorage (set in the /games page modal)
         const userId = localStorage.getItem('tedx_userid');
         const playerName = localStorage.getItem('tedx_username') || "Anonymous";
-        
+
         if (userId) {
           await submitScore('surf', userId, score);
           console.log(`Score of ${score} submitted for ${playerName}`);
@@ -56,7 +96,13 @@ export default function MarioGamePage() {
     };
 
     window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      // Safety net: never leave the page locked if this unmounts mid-game
+      if (document.body.style.position === 'fixed') {
+        unlockBodyScroll();
+      }
+    };
   }, []);
 
   if (!isAuthorized) {
@@ -75,8 +121,8 @@ export default function MarioGamePage() {
       className="flex flex-col items-center justify-start min-h-screen py-8 px-4"
     >
       <div className="w-full max-w-5xl mb-6 flex items-center justify-between">
-        <Link 
-          href="/games" 
+        <Link
+          href="/games"
           className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 font-[family-name:var(--font-inter)]"
         >
           &larr; Back to Games
@@ -84,7 +130,7 @@ export default function MarioGamePage() {
         <h1 className="text-2xl font-bold font-[family-name:var(--font-molend)] text-white">
           Endless <span className="text-red-600">Sail</span>
         </h1>
-        <button 
+        <button
           onClick={toggleFullScreen}
           className="flex items-center gap-2 bg-red-600/20 text-red-500 hover:bg-red-600/40 hover:text-white border border-red-600/50 px-4 py-2 rounded-full font-medium transition-all font-[family-name:var(--font-inter)]"
         >
@@ -93,8 +139,9 @@ export default function MarioGamePage() {
         </button>
       </div>
 
-      <div 
+      <div
         ref={containerRef}
+        style={{ touchAction: 'none', overscrollBehavior: 'none' }}
         className="w-full max-w-5xl bg-black border border-gray-800 rounded-xl flex flex-col items-center justify-center h-[500px] sm:h-[600px] max-h-[75vh] shadow-[0_0_20px_rgba(220,38,38,0.2)] relative overflow-hidden group"
       >
         <div className="absolute inset-0 bg-red-600/5 group-hover:bg-red-600/10 transition-colors duration-500 pointer-events-none"></div>
@@ -111,14 +158,14 @@ export default function MarioGamePage() {
         {gameOverData && gameOverData.show && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
             {/* Backdrop with the OG topographic background showing through */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-[#0a0a0a] bg-[url('/bg1.png')] bg-repeat bg-top bg-left"
             >
               {/* Translucent grid overlay */}
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   backgroundImage: `linear-gradient(rgba(220,38,38,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(220,38,38,0.06) 1px, transparent 1px)`,
@@ -128,9 +175,9 @@ export default function MarioGamePage() {
               {/* Dark vignette for focus */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
             </motion.div>
-            
+
             {/* Modal Content — matches username modal style */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -138,7 +185,7 @@ export default function MarioGamePage() {
             >
               {/* Top accent line — same as username modal */}
               <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
-              
+
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="w-12 h-12 mx-auto mb-4 border border-red-600/30 rounded-xl flex items-center justify-center bg-red-600/10">
@@ -159,7 +206,7 @@ export default function MarioGamePage() {
                   {gameOverData.score.toLocaleString()}
                 </span>
               </div>
-              
+
               {/* Buttons */}
               <div className="flex flex-col gap-3">
                 <button
