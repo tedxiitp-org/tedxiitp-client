@@ -77,12 +77,12 @@ export default function AboutTheTheme() {
               "
               onClick={() => {
                 window.open(
-                  "https://www.instagram.com/reels/DceHAwlSg6s/",
+                  "https://www.instagram.com/p/Db8U0BIMpyT/?hl=en",
                   "_blank"
                 );
               }}
             >
-              theme video
+              theme video teaser
             </button>
           </div>
 
