@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 export default function AboutTheTheme() {
@@ -73,8 +75,14 @@ export default function AboutTheTheme() {
                 font-inter
                 uppercase
               "
+              onClick={() => {
+                window.open(
+                  "https://www.instagram.com/reels/DceHAwlSg6s/",
+                  "_blank"
+                );
+              }}
             >
-              watch the reveal
+              theme video
             </button>
           </div>
 
@@ -113,7 +121,7 @@ export default function AboutTheTheme() {
                 }}
               >
                 <Image
-                  src="/aboutTheThemeBg.svg"
+                  src="/aboutTheThemeBG.svg"
                   alt="about the theme"
                   fill
                   className="object-cover"
