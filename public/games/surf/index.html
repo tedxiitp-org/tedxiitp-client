@@ -17,11 +17,14 @@
             height: 100%;
             overflow: hidden;
             background-color: #0d47a1; /* Classic Surf-style ocean blue */
+            overscroll-behavior: none;
+            touch-action: none;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         canvas {
             display: block;
+            touch-action: none;
         }
 
         /* UI Overlays */
@@ -163,7 +166,7 @@
         let coins = 0;
         let highScore = localStorage.getItem('sailHighScore') || 0;
         let totalCoins = localStorage.getItem('sailTotalCoins') || 0;
-        
+
         let baseSpeed = 5;
         let currentSpeed = 0;
         let distanceTraveled = 0;
@@ -196,7 +199,7 @@
             if(gameState === 'menu') initWaves();
         }
         window.addEventListener('resize', resize);
-        
+
         // --- CLASSES ---
 
         class Boat {
@@ -219,7 +222,7 @@
                 // Input handling (scaled by dt so turn rate is the same regardless of refresh rate)
                 if (keys.ArrowLeft || keys.a) this.vx -= this.speed * dt;
                 if (keys.ArrowRight || keys.d) this.vx += this.speed * dt;
-                
+
                 // Touch handling
                 if (touchX !== null) {
                     if (touchX < this.x - 10) this.vx -= this.speed * dt;
@@ -283,13 +286,13 @@
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
                 // Curve sail based on velocity
-                let sailCurve = this.vx * 2; 
+                let sailCurve = this.vx * 2;
                 ctx.moveTo(0, -this.height/2 + 15); // Top of mast
                 ctx.quadraticCurveTo(this.width + sailCurve, 0, this.width/2 + 10, this.height/2 - 10); // Bottom right
                 ctx.lineTo(-this.width/2 - 10, this.height/2 - 10); // Bottom left
                 ctx.closePath();
                 ctx.fill();
-                
+
                 // Mast
                 ctx.fillStyle = '#3e2723';
                 ctx.fillRect(-2, -this.height/2 + 10, 4, this.height - 20);
@@ -608,14 +611,14 @@
             draw() {
                 // Bobbing animation
                 let bob = Math.sin((frames + this.frameOffset) * 0.1) * 5;
-                
+
                 ctx.save();
                 ctx.translate(this.x, this.y + bob);
                 ctx.fillStyle = '#ffd700';
                 ctx.beginPath();
                 ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 ctx.strokeStyle = '#b8860b';
                 ctx.lineWidth = 3;
                 ctx.stroke();
@@ -672,14 +675,14 @@
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
-            
+
             waves.forEach(w => {
                 w.y += currentSpeed * w.speed * dt;
                 if (w.y > canvas.height) {
                     w.y = -20;
                     w.x = Math.random() * canvas.width;
                 }
-                
+
                 ctx.beginPath();
                 ctx.moveTo(w.x, w.y);
                 ctx.quadraticCurveTo(w.x + w.width/2, w.y + 10, w.x + w.width, w.y);
@@ -694,12 +697,12 @@
             mainMenu.style.display = 'none';
             gameOverMenu.style.display = 'none';
             hud.style.display = 'flex';
-            
+
             boat = new Boat();
             obstacles = [];
             collectibles = [];
             particles = [];
-            
+
             score = 0;
             coins = 0;
             distanceTraveled = 0;
@@ -711,16 +714,23 @@
             obstacleTimer2 = 0;
             coinTimer = 0;
             hudTimer = 0;
-            
+
             highScoreDisplay.innerText = `HI: ${highScore}m`;
             updateHUD();
+
+            // Tell the parent page to lock its own scroll while we're playing —
+            // needed because iOS can chain a touch-scroll gesture out of an
+            // iframe that has nothing scrollable, into the parent document.
+            if (window.parent) {
+                window.parent.postMessage({ type: 'GAME_STATE', game: 'surf', state: 'playing' }, '*');
+            }
         }
 
         function gameOver() {
             gameState = 'gameover';
             hud.style.display = 'none';
             gameOverMenu.style.display = 'block';
-            
+
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('sailHighScore', highScore);
@@ -731,9 +741,10 @@
             document.getElementById('finalScore').innerText = score;
             document.getElementById('finalHighScore').innerText = highScore;
             document.getElementById('finalCoins').innerText = coins;
-            
-            // Post score to the parent window
+
+            // Unlock the parent page's scroll now that we've stopped playing
             if (window.parent) {
+                window.parent.postMessage({ type: 'GAME_STATE', game: 'surf', state: 'stopped' }, '*');
                 window.parent.postMessage({ type: 'GAME_OVER', game: 'surf', score: score }, '*');
             }
         }
@@ -792,7 +803,7 @@
 
             if (gameState === 'playing') {
                 frames += dt;
-                
+
                 // Difficulty Scaling
                 currentSpeed = baseSpeed + (score / 500);
                 distanceTraveled += currentSpeed * dt;
@@ -866,6 +877,11 @@
         }
 
         // --- INPUT LISTENERS ---
+        window.addEventListener('wheel', (e) => {
+            if (gameState === 'playing') {
+                e.preventDefault();
+            }
+        }, { passive: false });
         window.addEventListener('keydown', (e) => {
             if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
         });
@@ -875,11 +891,21 @@
 
         // Touch handling (Drag to steer)
         window.addEventListener('touchstart', (e) => {
+            if (gameState === 'playing') {
+                e.preventDefault();
+            }
+
             touchX = e.touches[0].clientX;
-        });
+        }, { passive: false });
+
         window.addEventListener('touchmove', (e) => {
+            if (gameState === 'playing') {
+                e.preventDefault();
+            }
+
             touchX = e.touches[0].clientX;
-        });
+        }, { passive: false });
+
         window.addEventListener('touchend', () => {
             touchX = null;
         });
