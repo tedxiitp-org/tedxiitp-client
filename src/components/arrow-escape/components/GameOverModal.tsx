@@ -1,6 +1,7 @@
 "use client";
 
 import type { SessionStatus } from "@/components/arrow-escape/hooks/useGameSession";
+import GamesPage from "@/app/games/page";
 
 interface GameOverModalProps {
   status: Extract<SessionStatus, "won" | "lost-hearts">;
@@ -114,6 +115,15 @@ export default function GameOverModal({
           className="mt-6 w-full rounded-2xl bg-white text-[#14151f] font-semibold py-3 hover:bg-white/90 transition-colors"
         >
           {copy.buttonLabel}
+        </button>
+        <button
+          onClick={() => {
+            // Navigate to the Games page
+            window.location.href = "/games";
+          }}
+          className="mt-6 w-full rounded-2xl bg-white text-[#14151f] font-semibold py-3 hover:bg-white/90 transition-colors"
+        >
+          Return to Games
         </button>
       </div>
     </div>
