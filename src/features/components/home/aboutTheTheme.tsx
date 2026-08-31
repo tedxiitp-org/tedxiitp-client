@@ -74,15 +74,16 @@ export default function AboutTheTheme() {
                 hover:bg-red-700/40
                 font-inter
                 uppercase
+                cursor-pointer
               "
               onClick={() => {
                 window.open(
-                  "https://www.instagram.com/p/Db8U0BIMpyT/?hl=en",
+                  "https://www.instagram.com/reels/DceHAwlSg6s/",
                   "_blank"
                 );
               }}
             >
-              theme video teaser
+              theme video
             </button>
           </div>
 
