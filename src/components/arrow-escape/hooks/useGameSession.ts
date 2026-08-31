@@ -69,6 +69,10 @@ export function useGameSession(levels: LevelDefinition[], options: UseGameSessio
     [levels.length]
   );
 
+  const handleArrowCleared = useCallback(() => {
+    setTotalCoinsEarned((c) => c + 1);
+  }, []);
+
   const resetSession = useCallback(() => {
     setLevelIndex(0);
     setHearts(totalHearts);
@@ -88,6 +92,7 @@ export function useGameSession(levels: LevelDefinition[], options: UseGameSessio
     sessionStatus,
     handleBlocked,
     handleLevelCleared,
+    handleArrowCleared,
     resetSession,
   };
 }

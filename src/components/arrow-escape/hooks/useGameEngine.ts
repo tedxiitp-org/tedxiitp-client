@@ -25,6 +25,7 @@ export interface UseGameEngineOptions {
   onBlocked: () => void;
   /** Called exactly once, the moment every arrow on this level has been removed. */
   onAllCleared: () => void;
+  onArrowCleared?: () => void;
   initialHintCount?: number;
   initialEraserCount?: number;
 }
@@ -41,7 +42,7 @@ export function useGameEngine(
   dimensions: BoardDimensions,
   options: UseGameEngineOptions
 ) {
-  const { interactive, onBlocked, onAllCleared, initialHintCount = 3, initialEraserCount = 3 } = options;
+  const { interactive, onBlocked, onAllCleared, onArrowCleared, initialHintCount = 3, initialEraserCount = 3 } = options;
 
   const [arrows, setArrows] = useState<Arrow[]>(initialArrows);
   const [flash, setFlash] = useState<FlashState | null>(null);
@@ -95,6 +96,12 @@ export function useGameEngine(
       if (outcome.kind === "already-removed") return;
 
       if (outcome.kind === "moved") {
+        const previouslyRemoved = arrows.filter(a => a.removed).length;
+        const nowRemoved = nextArrows.filter(a => a.removed).length;
+        if (nowRemoved > previouslyRemoved) {
+          onArrowCleared?.();
+        }
+
         setArrows(nextArrows);
         setFlash((prev) => ({
           kind: "green",
@@ -113,7 +120,7 @@ export function useGameEngine(
         token: (prev?.token ?? 0) + 1,
       }));
     },
-    [arrows, board, onBlocked]
+    [arrows, board, onBlocked, onArrowCleared]
   );
 
   const performErase = useCallback(
@@ -122,6 +129,7 @@ export function useGameEngine(
       if (!target || target.removed) return;
 
       setArrows((prev) => prev.map((a) => (a.id === arrowId ? { ...a, removed: true } : a)));
+      onArrowCleared?.();
       setEraserCount((n) => Math.max(0, n - 1));
       setActiveBooster(null);
       setLastOutcome({
@@ -144,7 +152,7 @@ export function useGameEngine(
       }, ERASE_FADE_MS);
       eraseTimeoutsRef.current[arrowId] = timeoutId;
     },
-    [arrows]
+    [arrows, onArrowCleared]
   );
 
   const handleArrowClick = useCallback(

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Settings } from "lucide-react";
 import { ALL_LEVELS } from "@/components/arrow-escape/levels";
 import { calculateTotalPoints } from "@/components/arrow-escape/utils/points"; 
+import { submitScore } from "@/lib/api";
 import { instantiateLevel } from "@/components/arrow-escape/engine/LevelLoader";
 import { useGameSession } from "@/components/arrow-escape/hooks/useGameSession";
 import { usePersistedProgress } from "@/components/arrow-escape/hooks/usePersistedProgress";
@@ -94,6 +95,7 @@ function GameBoardInner({
   }, [liveEraserCount, onEraserCountChange]);
 
   const coinsAwardedRef = useRef(false);
+  const scoreSubmittedRef = useRef(false);
   useEffect(() => {
     if (session.sessionStatus === "won" && !coinsAwardedRef.current) {
       coinsAwardedRef.current = true;
@@ -130,6 +132,7 @@ function GameBoardInner({
   const handleReset = () => {
     sound.playClick();
     coinsAwardedRef.current = false;
+    scoreSubmittedRef.current = false;
     session.resetSession();
   };
 
@@ -143,6 +146,18 @@ function GameBoardInner({
    const pointsBreakdown = isGameOver
     ? calculateTotalPoints(levelsCleared, session.elapsedSeconds, session.sessionStatus === "won")
     : null;
+
+  useEffect(() => {
+    if (isGameOver && pointsBreakdown && !scoreSubmittedRef.current) {
+      scoreSubmittedRef.current = true;
+      const userId = localStorage.getItem("tedx_userid");
+      if (userId) {
+        submitScore("arrowEscape", userId, pointsBreakdown.totalPoints).catch(err => {
+          console.error("Failed to submit score", err);
+        });
+      }
+    }
+  }, [isGameOver, pointsBreakdown]);
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-5 p-6 bg-[#14151f] text-white font-sans">
@@ -181,7 +196,7 @@ function GameBoardInner({
         <span className="text-white/70" title="Total time this run">
           {formatTime(session.elapsedSeconds)}
         </span>
-        <span className="text-yellow-300 font-semibold">{coinsBank} coins</span>
+        <span className="text-yellow-300 font-semibold">{coinsBank + session.totalCoinsEarned} coins</span>
       </div>
 
       {session.currentLevel &&
@@ -209,7 +224,8 @@ function GameBoardInner({
               dimensions={currentLevel.board}
               interactive={session.sessionStatus === "playing"}
               onBlocked={session.handleBlocked}
-              onAllCleared={() => session.handleLevelCleared(currentLevel.coinReward)}
+              onAllCleared={() => session.handleLevelCleared(0)}
+              onArrowCleared={() => session.handleArrowCleared()}
               initialHintCount={liveHintCount}
               initialEraserCount={liveEraserCount}
               onHintCountChange={setLiveHintCount}

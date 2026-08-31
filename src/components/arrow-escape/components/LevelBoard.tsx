@@ -15,7 +15,8 @@ export interface LevelBoardProps {
   interactive: boolean;
   onBlocked: () => void;
   onAllCleared: () => void;
-  initialHintCount: number;
+  onArrowCleared?: () => void;
+  initialHintCount?: number;
   initialEraserCount: number;
   onHintCountChange: (count: number) => void;
   onEraserCountChange: (count: number) => void;
@@ -40,7 +41,8 @@ export default function LevelBoard({
   interactive,
   onBlocked,
   onAllCleared,
-  initialHintCount,
+  onArrowCleared,
+  initialHintCount = 3,
   initialEraserCount,
   onHintCountChange,
   onEraserCountChange,
@@ -67,6 +69,7 @@ export default function LevelBoard({
     interactive,
     onBlocked,
     onAllCleared,
+    onArrowCleared,
     initialHintCount,
     initialEraserCount,
   });
