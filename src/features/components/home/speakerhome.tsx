@@ -304,23 +304,15 @@ export default function SpeakerHome() {
             </h4>
 
             <p 
-              className={spaceGrotesk.className}
-              style={{
-                fontSize: '14px',
-                lineHeight: '1.6',
-                color: '#cccccc',
-                textAlign: 'center',
-                maxWidth: '100%',
-                marginBottom: '24px',
-                fontWeight: '400'
-              }}
+              className={`${spaceGrotesk.className} text-sm md:text-base lg:text-lg leading-relaxed text-gray-300 text-center lg:text-left w-full mb-6 font-normal`}
             >
               {currentActiveSpeaker.description}
             </p>
           </div>
 
           {/* NEXT / PREV CAROUSEL CONTROLS */}
-          <div style={{
+          
+          {/* <div style={{
             display: 'flex',
             gap: '12px',
             alignSelf: 'center',
@@ -342,7 +334,7 @@ export default function SpeakerHome() {
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
               />
             </button>
-          </div>
+          </div> */}
         </div>
 
       </div>

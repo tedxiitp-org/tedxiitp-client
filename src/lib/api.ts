@@ -340,15 +340,23 @@ export interface GlobalLeaderboardResponse {
 }
 
 export async function registerUser(username: string): Promise<any> {
-  return request("/api/games/register", { method: "POST", body: JSON.stringify({ username }) }).catch(() => ({ success: true }));
+  return request<any>("/api/v1/users/identity", { method: "POST", body: JSON.stringify({ username }) })
+    .then((res) => ({ data: res }))
+    .catch((err) => ({ error: err?.message || "Failed to register user. Please try again." }));
 }
 
 export async function submitScore(gameId: string, userId: string, score: number): Promise<any> {
-  return request(`/api/v1/games/${gameId}/submit-stats`, { method: "POST", body: JSON.stringify({ userId, score }) }).catch(() => ({ success: true }));
+  return request(`/api/v1/games/${gameId}/submit-stats`, { method: "POST", body: JSON.stringify({ userId, rawScore: score, timeTaken: score }) })
+    .catch((err) => {
+      console.error("Score submission error:", err);
+      throw err;
+    });
 }
 
 export async function fetchLeaderboard(gameId: string): Promise<LeaderboardEntry[]> {
-  return request<LeaderboardEntry[]>("/api/v1/leaderboard/" + gameId).catch(() => []);
+  return request<{ data: LeaderboardEntry[] }>("/api/v1/leaderboard/" + gameId)
+    .then((res) => res.data)
+    .catch(() => []);
 }
 
 export async function fetchGlobalLeaderboard(page: number, limit: number): Promise<GlobalLeaderboardResponse> {
