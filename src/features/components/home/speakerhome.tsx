@@ -312,7 +312,7 @@ export default function SpeakerHome() {
 
           {/* NEXT / PREV CAROUSEL CONTROLS */}
           
-          {/* <div style={{
+          <div style={{
             display: 'flex',
             gap: '12px',
             alignSelf: 'center',
@@ -334,7 +334,7 @@ export default function SpeakerHome() {
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
               />
             </button>
-          </div> */}
+          </div>
         </div>
 
       </div>
