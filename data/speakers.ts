@@ -26,6 +26,49 @@ export const SpeakersData: Speaker[] = [
         ytLink: "",
         talk: ""
     },
+    {
+        _id: "42",
+        name: "",
+        image: "",
+        title: "",
+        body: "",
+        isPublished: true,
+        year: 2026,
+        ytLink: "",
+        talk: ""
+    },
+     {
+        _id: "43",
+        name: "",
+        image: "",
+        title: "",
+        body: "",
+        isPublished: true,
+        year: 2026,
+        ytLink: "",
+        talk: ""
+    }, {
+        _id: "44",
+        name: "",
+        image: "",
+        title: "",
+        body: "",
+        isPublished: true,
+        year: 2026,
+        ytLink: "",
+        talk: ""
+    }, {
+        _id: "45",
+        name: "",
+        image: "",
+        title: "",
+        body: "",
+        isPublished: true,
+        year: 2026,
+        ytLink: "",
+        talk: ""
+    }
+    ,
     // Naveen kumar
     {
         _id: "1",
