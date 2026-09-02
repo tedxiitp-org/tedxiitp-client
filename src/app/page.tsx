@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import HomeHero from "@/features/components/home/heroHome";
 import AboutTheTheme from "@/features/components/home/aboutTheTheme";
+import SpeakerHome from "@/features/components/home/speakerhome";
 
 export const metadata: Metadata = {
   title: "TEDxIIT Patna | Home",
@@ -27,6 +28,7 @@ export default function IndexPage() {
       </div>
       <HomeHero />
       <AboutTheTheme />
+      <SpeakerHome/>
     </div>
   );
 }
