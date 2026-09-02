@@ -2,6 +2,30 @@ import { Speaker } from "@/types/speaker";
 
 export const SpeakersData: Speaker[] = [
     // year 2025 speakers
+    // New Speaker 1
+    {
+        _id: "40",
+        name: "Karishma Sharma",
+        image: "/speakerImages/karishma.png",
+        title: "",
+        body: "Karishma Sharma, a familiar face across Indian entertainment, began her journey with television before making her Bollywood debut with Pyaar Ka Punchnama 2. Since then, she has worked across films, television, and music videos, building a distinctive presence through her versatility and screen appeal. From Pyaar Ka Punchnama 2 to the widely loved Tera Ghata, her journey reflects an evolving career across different forms of storytelling.With every new role and opportunity, Karishma brings her own energy and perspective to the screen, continuing to explore new dimensions of performance and entertainment.",
+        isPublished: true,
+        year: 2026,
+        ytLink: "",
+        talk: ""
+    },
+    // New Speaker 2
+    {
+        _id: "41",
+        name: "Kishan Panpalia",
+        image: "/speakerImages/kishan.png",
+        title: "",
+        body: "Kishan Panpalia is a Forbes 30 Under 30 honouree and a founding team member of Pepper Content, a multi-million-dollar content technology company. Beyond entrepreneurship, he has contributed to transformative initiatives including Project Raksha and Trinetra, leveraging technology and data-driven solutions to help drastically reduce crime across multiple cities. His journey reflects a rare blend of innovation, entrepreneurship, and social impact, demonstrating how technology can move beyond businesses to create meaningful change in society.",
+        isPublished: true,
+        year: 2026,
+        ytLink: "",
+        talk: ""
+    },
     // Naveen kumar
     {
         _id: "1",
