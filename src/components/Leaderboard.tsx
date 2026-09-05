@@ -30,8 +30,8 @@ export default function Leaderboard({ gameId }: LeaderboardProps) {
     <div className="bg-black/80 border border-gray-800 rounded-xl overflow-hidden flex flex-col h-full shadow-[0_0_20px_rgba(220,38,38,0.1)]">
       <div className="p-4 border-b border-gray-800 flex items-center gap-3 bg-gray-900/50">
         <Trophy className="text-yellow-500 w-5 h-5" />
-        <h3 className="text-lg font-bold text-white font-[family-name:var(--font-space)] uppercase tracking-wider">
-          Top Players
+        <h3 className="text-lg font-bold text-white font-space uppercase tracking-wider">
+          All-time high scores
         </h3>
       </div>
 
@@ -41,7 +41,7 @@ export default function Leaderboard({ gameId }: LeaderboardProps) {
             <Loader2 className="w-6 h-6 text-red-500 animate-spin" />
           </div>
         ) : scores.length === 0 ? (
-          <div className="flex items-center justify-center h-32 text-gray-500 font-[family-name:var(--font-inter)] text-sm">
+          <div className="flex items-center justify-center h-32 text-gray-500 font-inter text-sm">
             No scores yet. Be the first!
           </div>
         ) : (
@@ -56,18 +56,18 @@ export default function Leaderboard({ gameId }: LeaderboardProps) {
                   }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className={`font-bold font-[family-name:var(--font-space)] w-5 text-center ${index === 0 ? 'text-yellow-500' :
+                  <span className={`font-bold font-space w-5 text-center ${index === 0 ? 'text-yellow-500' :
                       index === 1 ? 'text-gray-300' :
                         index === 2 ? 'text-amber-600' :
                           'text-gray-500'
                     }`}>
                     {index + 1}
                   </span>
-                  <span className="text-white font-[family-name:var(--font-inter)] font-medium">
+                  <span className="text-white font-inter font-medium">
                     {entry.username}
                   </span>
                 </div>
-                <span className="text-red-400 font-bold font-[family-name:var(--font-space)] tracking-wider">
+                <span className="text-red-400 font-bold font-space tracking-wider">
                   {entry.cumulativeScore}
                 </span>
               </div>
