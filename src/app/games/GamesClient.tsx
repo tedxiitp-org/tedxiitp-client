@@ -25,6 +25,14 @@ const games = [
     active: true,
   },
   {
+    id: "arrowEscape",
+    title: "Arrow Escape",
+    description: "Beyond the maze, every arrow has a direction—find the pattern and break free.",
+    thumbnail: "/arrowEscapeThumbnail.png",
+    href: "/games/arrow-escape",
+    active: true,
+  },
+  {
     id: "game3",
     title: "Endless Sail",
     description: "Ready to explore the unexplored!!",
