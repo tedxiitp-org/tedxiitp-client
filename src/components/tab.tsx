@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 export default function DynamicTabTitle() {
   useEffect(() => {
     let originalTitle = "";
-    const alertTitle = "Merch Is Out!";
+    const alertTitle = "Tickets are now Live!";
 
     const handleVisibilityChange = () => {
       if (document.hidden) {

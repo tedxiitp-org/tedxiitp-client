@@ -15,8 +15,8 @@ interface EventItem {
 
 const events: EventItem[] = [
   {
-    title: "Orientation",
-    dateTime: "TBD",
+    title: "Funfair",
+    dateTime: "12th September 2026",
     location: "TBD",
     description:
       "More details about this upcoming event will be announced soon. Stay tuned for exciting speakers and ideas!",
