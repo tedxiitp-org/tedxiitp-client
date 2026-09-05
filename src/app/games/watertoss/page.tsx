@@ -29,11 +29,10 @@ export default function WaterTossPage() {
             ) {
                 const score = event.data.score;
                 const userId = localStorage.getItem("tedx_userid");
-                const gameId = "6a9a5bad535aeb2aec497322";
 
-                if (userId && gameId) {
+                if (userId) {
                     try {
-                        await submitScore(gameId, userId, score);
+                        await submitScore('watertoss', userId, score);
                         console.log(`Water Toss score submitted: ${score}`);
                     } catch (error) {
                         console.error(
@@ -43,7 +42,7 @@ export default function WaterTossPage() {
                     }
                 } else {
                     console.error(
-                        "Missing userId or NEXT_PUBLIC_WATER_TOSS_GAME_ID"
+                        "Missing userId"
                     );
                 }
             }
