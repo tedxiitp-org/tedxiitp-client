@@ -78,7 +78,7 @@ export default function AboutTheTheme() {
               "
               onClick={() => {
                 window.open(
-                  "https://www.instagram.com/reels/DceHAwlSg6s/",
+                  "https://youtu.be/vi_kmCYBd4w?si=kxWICZFiACBKVX5z",
                   "_blank"
                 );
               }}

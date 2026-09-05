@@ -55,25 +55,32 @@ export default function SpeakerCard({ speaker, isSelected, onClick, onOpenModal 
       >
         <div className="absolute inset-0 bg-neutral-900" />
 
-        <Image
-          src={speaker.image}
-          alt={speaker.name}
-          fill
-          onLoad={() => setIsLoaded(true)}
-          className={`object-cover transition-all duration-700 ease-out ${
-            isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          } ${
-            isSelected ? "grayscale-0 contrast-110" : "grayscale tracking-wide"
-          }`}
-          sizes="(max-width: 640px) 80vw, (max-width: 768px) 250px, 400px"
-          priority={isSelected}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+        {speaker.image ? (
+          <Image
+            src={speaker.image}
+            alt={speaker.name || "Speaker"}
+            fill
+            onLoad={() => setIsLoaded(true)}
+            className={`object-cover transition-all duration-700 ease-out ${
+              isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            } ${
+              isSelected ? "grayscale-0 contrast-110" : "grayscale tracking-wide"
+            }`}
+            sizes="(max-width: 640px) 80vw, (max-width: 768px) 250px, 400px"
+            priority={isSelected}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-xs tracking-wider uppercase text-neutral-500">
+            Coming Soon
+          </div>
+        )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
 
         {isSelected && (
           <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center px-4 text-center text-white z-20 transition-all duration-300">
             <h3 className="font-bold text-[20px] sm:text-[24px] tracking-[0.08rem] font-sourceSans max-w-full truncate px-2">
-              {speaker.name}
+              {speaker.name || "Speaker"}
             </h3>
             <button
               type="button"
