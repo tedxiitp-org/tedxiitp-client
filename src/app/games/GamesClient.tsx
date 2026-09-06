@@ -29,13 +29,14 @@ const games = [
     active: true,
   },
   {
-    id: "game4",
-    title: "Coming Soon",
-    description: "Stay tuned for updates.",
-    thumbnail: "/placeholder-game.jpg",
-    href: "#",
-    active: false,
+    id: "brick-breaker",
+    title: "Brick Breaker",
+    description: "Keep the rally alive, break the wall, and claim the high score.",
+    thumbnail: "/figgi2.jpg",
+    href: "/games/brick-breaker",
+    active: true,
   },
+  
 ];
 
 export default function GamesClient() {
