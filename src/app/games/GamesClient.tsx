@@ -17,12 +17,20 @@ const games = [
     active: true,
   },
   {
-    id: "game2",
-    title: "Coming Soon",
-    description: "Another exciting game is on the way.",
-    thumbnail: "/placeholder-game.jpg",
-    href: "#",
-    active: false,
+    id: "water-toss",
+    title: "Ring Toss",
+    description: "Collect specimens from the deep and master the ocean currents.",
+    thumbnail: "/ringtoss1.png",
+    href: "/games/watertoss",
+    active: true,
+  },
+  {
+    id: "arrowEscape",
+    title: "Arrow Escape",
+    description: "Beyond the maze, every arrow has a direction—find the pattern and break free.",
+    thumbnail: "/arrowEscapeThumbnail.png",
+    href: "/games/arrow-escape",
+    active: true,
   },
   {
     id: "game3",
@@ -71,10 +79,10 @@ export default function GamesClient() {
     e.preventDefault();
     const trimmed = usernameInput.trim();
     if (!trimmed) return;
-    
+
     setAuthError("");
     const response = await registerUser(trimmed);
-    
+
     if (response.data && response.data.userId) {
       localStorage.setItem('tedx_username', trimmed);
       localStorage.setItem('tedx_userid', response.data.userId);
@@ -105,28 +113,25 @@ export default function GamesClient() {
       <div className="mb-12 flex items-center bg-[#050505] border border-[#1a1a1a] rounded-full p-1.5 shadow-[0_0_20px_rgba(220,38,38,0.05)] relative w-full max-w-[400px]">
         <button
           onClick={() => setActiveTab('games')}
-          className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-3 rounded-full transition-all duration-300 ${
-            activeTab === 'games' ? 'text-white' : 'text-[#666] hover:text-[#a0a0a0]'
-          }`}
+          className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-3 rounded-full transition-all duration-300 ${activeTab === 'games' ? 'text-white' : 'text-[#666] hover:text-[#a0a0a0]'
+            }`}
         >
           <Gamepad2 className={`w-4 h-4 ${activeTab === 'games' ? 'text-red-500' : ''}`} />
           <span className="font-bold tracking-[0.15em] uppercase font-[family-name:var(--font-space)] text-sm">Games</span>
         </button>
         <button
           onClick={() => setActiveTab('leaderboard')}
-          className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-3 rounded-full transition-all duration-300 ${
-            activeTab === 'leaderboard' ? 'text-white' : 'text-[#666] hover:text-[#a0a0a0]'
-          }`}
+          className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-3 rounded-full transition-all duration-300 ${activeTab === 'leaderboard' ? 'text-white' : 'text-[#666] hover:text-[#a0a0a0]'
+            }`}
         >
           <Trophy className={`w-4 h-4 ${activeTab === 'leaderboard' ? 'text-red-500' : ''}`} />
           <span className="font-bold tracking-[0.15em] uppercase font-[family-name:var(--font-space)] text-sm">Leaderboard</span>
         </button>
-        
+
         {/* Animated Background Pill */}
-        <div 
-          className={`absolute inset-y-1.5 w-[calc(50%-6px)] bg-red-600/10 border border-red-600/30 rounded-full transition-transform duration-500 ease-out shadow-[0_0_15px_rgba(220,38,38,0.2)] ${
-            activeTab === 'games' ? 'left-1.5 translate-x-0' : 'left-1.5 translate-x-[calc(100%+6px)]'
-          }`}
+        <div
+          className={`absolute inset-y-1.5 w-[calc(50%-6px)] bg-red-600/10 border border-red-600/30 rounded-full transition-transform duration-500 ease-out shadow-[0_0_15px_rgba(220,38,38,0.2)] ${activeTab === 'games' ? 'left-1.5 translate-x-0' : 'left-1.5 translate-x-[calc(100%+6px)]'
+            }`}
         />
       </div>
 
@@ -177,23 +182,23 @@ export default function GamesClient() {
       <AnimatePresence>
         {showUsernameModal && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowUsernameModal(false)}
               className="absolute inset-0 bg-black/90 backdrop-blur-md"
             />
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-md bg-[#0a0a0a] border border-red-600/30 rounded-2xl p-8 shadow-[0_0_50px_rgba(220,38,38,0.15)] overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
-              
-              <button 
+
+              <button
                 onClick={() => setShowUsernameModal(false)}
                 className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
               >
@@ -231,7 +236,7 @@ export default function GamesClient() {
                     </p>
                   )}
                 </div>
-                
+
                 <button
                   type="submit"
                   disabled={!usernameInput.trim()}
@@ -265,10 +270,10 @@ function GameCard({ game }: { game: typeof games[0] }) {
               className="w-full h-full object-cover transform group-hover/card:scale-110 transition-transform duration-700 ease-in-out"
             />
             <div className="absolute inset-0 bg-red-950/40 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 flex items-center justify-center z-10 backdrop-blur-[2px]">
-               <div className="bg-red-600 text-white px-6 py-2.5 rounded-full font-bold tracking-widest uppercase transform translate-y-8 group-hover/card:translate-y-0 transition-all duration-500 ease-out font-[family-name:var(--font-space)] shadow-[0_0_20px_rgba(220,38,38,0.6)] border border-red-400/50 flex items-center gap-2">
-                 Play Now
-                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-               </div>
+              <div className="bg-red-600 text-white px-6 py-2.5 rounded-full font-bold tracking-widest uppercase transform translate-y-8 group-hover/card:translate-y-0 transition-all duration-500 ease-out font-[family-name:var(--font-space)] shadow-[0_0_20px_rgba(220,38,38,0.6)] border border-red-400/50 flex items-center gap-2">
+                Play Now
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </div>
             </div>
           </>
         ) : (
@@ -276,7 +281,7 @@ function GameCard({ game }: { game: typeof games[0] }) {
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-600 via-transparent to-transparent"></div>
           </div>
         )}
-        
+
         {!game.active && (
           <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
             <Lock className="text-gray-500 w-8 h-8" strokeWidth={1.5} />
