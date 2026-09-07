@@ -35,6 +35,7 @@
     "lenis": "^1.3.23",
     "lucide-react": "^1.22.0",
     "matter-js": "^0.20.0",
+    "mongodb": "^7.6.0",
     "next": "latest",
     "nextjs-toploader": "^3.9.17",
     "radix-ui": "^1.5.0",
