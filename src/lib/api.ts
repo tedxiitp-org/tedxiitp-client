@@ -135,12 +135,6 @@ export interface CheckDuplicateResponse {
   reason?: string;
 }
 
-export function checkDuplicates(items: CheckDuplicatePayload[]) {
-  return request<{ success: boolean; data: CheckDuplicateResponse[] }>(
-    "/api/qr/admin/ticket/check-duplicates",
-    { method: "POST", body: JSON.stringify({ items }) }
-  );
-}
 
 export interface BulkJobStatusResponse {
   jobId: string;
@@ -150,14 +144,6 @@ export interface BulkJobStatusResponse {
   items: BulkGenerateResult[];
 }
 
-export function getBulkJobStatus(jobId: string) {
-  return request<{
-    success: boolean;
-    data: BulkJobStatusResponse;
-  }>(`/api/qr/bulk-status/${jobId}`, {
-    method: "GET",
-  });
-}
 
 export interface BulkRevokeResult {
   email: string;
