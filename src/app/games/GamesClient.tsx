@@ -1,7 +1,11 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Lock, Trophy, X, Gamepad2, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import GlobalLeaderboard from "../../components/GlobalLeaderboard";
+import { registerUser } from "../../lib/api";
 
 const games = [
   {
@@ -10,6 +14,14 @@ const games = [
     description: "Beyond the known kingdom, adventure calls - jump into the unmapped.",
     thumbnail: "/mario-thumbnail.png",
     href: "/games/mario",
+    active: true,
+  },
+  {
+    id: "snake",
+    title: "TEDx Snake",
+    description: "Grow with every bite. Navigate the grid and climb the leaderboard.",
+    thumbnail: "/figgi.jpg",
+    href: "/games/snakes",
     active: true,
   },
   {
@@ -40,6 +52,11 @@ const games = [
 ];
 
 export default function GamesClient() {
+  const [activeTab, setActiveTab] = useState<'games' | 'leaderboard'>('games');
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [pendingGameUrl, setPendingGameUrl] = useState<string | null>(null);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [authError, setAuthError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -233,7 +250,7 @@ export default function GamesClient() {
           </div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </main>
   );
 }
 
@@ -272,9 +289,14 @@ function GameCard({ game }: { game: typeof games[0] }) {
           </div>
         )}
       </div>
-      <div className="mt-12 w-full max-w-5xl">
-        <GlobalLeaderboard />
+      <div className="p-6 flex-1 flex flex-col relative">
+        <h3 className="text-2xl font-bold text-white mb-3 font-[family-name:var(--font-space)] group-hover/card:text-red-500 transition-colors duration-300">
+          {game.title}
+        </h3>
+        <p className="text-sm text-gray-400 font-[family-name:var(--font-inter)] line-clamp-3 leading-relaxed">
+          {game.description}
+        </p>
       </div>
-    </main>
+    </div>
   );
 }
