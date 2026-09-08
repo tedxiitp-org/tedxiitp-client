@@ -25,12 +25,12 @@ const games = [
     active: true,
   },
   {
-    id: "game2",
-    title: "Coming Soon",
-    description: "Another exciting game is on the way.",
-    thumbnail: "/placeholder-game.jpg",
-    href: "#",
-    active: false,
+    id: "maze",
+    title: "3D Maze Escape",
+    description: "Explore multi-floor 3D corridors, navigate staircases, find the golden portal and escape!",
+    thumbnail: "/maze-thumbnail.png",
+    href: "/games/maze",
+    active: true,
   },
   {
     id: "game3",
