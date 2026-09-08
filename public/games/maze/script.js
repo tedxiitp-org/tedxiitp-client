@@ -109,29 +109,15 @@ loader.load(
     scene.add(gltfScene);
 
     gltfScene.updateMatrixWorld(true);
-    // Door material names that should be passable (not collidable)
-    const doorMaterialNames = ['greendoor', 'door'];
-    let doorCount = 0;
     gltfScene.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
         if (child.material) child.material.side = THREE.DoubleSide;
-
-        const mat = child.material;
-        const matName = (mat && mat.name || '').toLowerCase();
-        const isDoor = doorMaterialNames.includes(matName);
-
-        if (isDoor) {
-          doorCount++;
-          // Hide door meshes entirely so they don't block the view
-          child.visible = false;
-        } else {
-          collidableMeshes.push(child);
-        }
+        child.visible = true;
+        collidableMeshes.push(child);
       }
     });
-    console.log(`Door panels excluded: ${doorCount} | Collidable meshes: ${collidableMeshes.length}`);
 
     // Compute world bounds
     const box = new THREE.Box3().setFromObject(gltfScene);
@@ -242,7 +228,6 @@ function scanFloors() {
   pickSpawnAndExit(allHits);
   setupMarkers();
   resetPlayer();
-  buildFloorGuideLine();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -282,7 +267,6 @@ function pickSpawnAndExit(allHits) {
   let exitFound = false;
   
   // Filter out any isolated bottom structure below main floor (fh < mainFloorY - 3.0)
-  // Prioritize upper floors or valid main floor levels
   const validFloors = floorHeights
     .map((fh, idx) => ({ idx, fh, dist: fh - mainFloorY }))
     .filter(f => f.fh >= mainFloorY - 3.0 && floorInteriorCounts[f.idx] > 0);
@@ -291,7 +275,7 @@ function pickSpawnAndExit(allHits) {
   validFloors.sort((a, b) => b.fh - a.fh);
 
   for (const { fh, idx } of validFloors) {
-    if (idx === mainFloorIdx && validFloors.length > 1) continue; // Try non-main upper floors first
+    if (idx === mainFloorIdx && validFloors.length > 1) continue;
 
     const pts = allHits.filter(h => Math.abs(h.y - fh) < 0.6);
     if (pts.length < 3) continue;
@@ -300,29 +284,41 @@ function pickSpawnAndExit(allHits) {
     const rooms = candidates.filter(c => c.isRoom);
     const pool = rooms.length > 0 ? rooms : candidates;
 
-    let bestDist = -1;
+    // Pick candidate point nearest to spawn (at least 6m away)
+    let bestDist = Infinity;
     let bestPt = null;
     for (const { pt } of pool) {
       const d = Math.hypot(pt.x - startPoint.x, pt.z - startPoint.z);
-      if (d > bestDist) { bestDist = d; bestPt = pt; }
+      if (d >= 6.0 && d < bestDist) {
+        bestDist = d;
+        bestPt = pt;
+      }
     }
+    if (!bestPt && pool.length > 0) bestPt = pool[0].pt;
+
     if (bestPt) {
       exitPoint = bestPt;
       exitFound = true;
-      console.log(`Exit placed on explorable floor Y=${fh.toFixed(1)}`);
+      console.log(`Exit placed near spawn on floor Y=${fh.toFixed(1)}`);
       break;
     }
   }
 
-  // Fallback: Pick furthest point on the main floor itself
+  // Fallback: Pick nearest point on the main floor itself (>= 6m away)
   if (!exitFound) {
-    let bestDist = -1;
+    let bestDist = Infinity;
     for (const h of mainFloorPts) {
       const d = Math.hypot(h.x - startPoint.x, h.z - startPoint.z);
-      if (d > bestDist) { bestDist = d; exitPoint = h; }
+      if (d >= 6.0 && d < bestDist) {
+        bestDist = d;
+        exitPoint = h;
+      }
     }
     console.log(`Exit placed on main floor Y=${mainFloorY.toFixed(1)}`);
   }
+
+  console.log(`[PLAYER SPAWN] X: ${startPoint.x.toFixed(2)}, Y: ${startPoint.y.toFixed(2)}, Z: ${startPoint.z.toFixed(2)}`);
+  console.log(`[DESTINATION PORTAL] X: ${exitPoint.x.toFixed(2)}, Y: ${exitPoint.y.toFixed(2)}, Z: ${exitPoint.z.toFixed(2)}`);
 }
 
 function scoreRoomPoints(pts) {
