@@ -35,42 +35,22 @@ const BRICK_GAP_Y = 14;
 const BRICK_START_Y = 48;
 const BRICK_ROW_STEP = BRICK_HEIGHT + BRICK_GAP_Y;
 
-// Custom layout and clay-morphic colors matching the screenshot
-const BRICK_SCHEME = [
-  // Row 1 (5 bricks)
-  [
-    { color: "#FEE400" }, // Yellow
-    { color: "#FA8F8F" }, // Pink
-    { color: "#F97316" }, // Orange
-    { color: "#FA8F8F" }, // Pink
-    { color: "#FEE400" }, // Yellow
-  ],
-  // Row 2 (4 bricks centered)
-  [
-    { color: "#10B981" }, // Green
-    { color: "#A87146" }, // Light Brown
-    { color: "#A87146" }, // Light Brown
-    { color: "#10B981" }, // Green
-  ],
-  // Row 3 (3 bricks centered)
-  [
-    { color: "#EAB308" }, // Olive Yellow
-    { color: "#A3E635" }, // Light Green
-    { color: "#EAB308" }, // Olive Yellow
-  ],
-  // Row 4 (2 bricks split with an arch space in between)
-  [
-    { color: "#818CF8", colIndex: 0.5 }, // Purple left
-    { color: "#818CF8", colIndex: 2.5 }, // Purple right
-  ],
+const ROW_PALETTES = [
+  ["#FEE400", "#FA8F8F", "#F97316", "#FA8F8F", "#FEE400"],
+  ["#10B981", "#34D399", "#06B6D4", "#34D399", "#10B981"],
+  ["#818CF8", "#A78BFA", "#EC4899", "#A78BFA", "#818CF8"],
+  ["#F59E0B", "#FBBF24", "#F97316", "#FBBF24", "#F59E0B"],
+  ["#38BDF8", "#818CF8", "#C084FC", "#818CF8", "#38BDF8"],
 ];
+let paletteCycle = 0;
 
-function generatePyramidBricks(): Brick[] {
+function generatePyramidBricks(startId = 0): Brick[] {
   const bricks: Brick[] = [];
-  let counter = 0;
+  let counter = startId;
 
   // Row 0: 5 bricks
   const r0StartX = (BOARD_WIDTH - (5 * BRICK_WIDTH + 4 * BRICK_GAP_X)) / 2;
+  const colors0 = ROW_PALETTES[0];
   for (let i = 0; i < 5; i++) {
     bricks.push({
       id: counter++,
@@ -78,13 +58,14 @@ function generatePyramidBricks(): Brick[] {
       y: BRICK_START_Y,
       width: BRICK_WIDTH,
       height: BRICK_HEIGHT,
-      color: BRICK_SCHEME[0][i].color,
+      color: colors0[i],
       hit: false,
     });
   }
 
   // Row 1: 4 bricks centered
   const r1StartX = (BOARD_WIDTH - (4 * BRICK_WIDTH + 3 * BRICK_GAP_X)) / 2;
+  const colors1 = ["#10B981", "#A87146", "#A87146", "#10B981"];
   for (let i = 0; i < 4; i++) {
     bricks.push({
       id: counter++,
@@ -92,13 +73,14 @@ function generatePyramidBricks(): Brick[] {
       y: BRICK_START_Y + BRICK_ROW_STEP,
       width: BRICK_WIDTH,
       height: BRICK_HEIGHT,
-      color: BRICK_SCHEME[1][i].color,
+      color: colors1[i],
       hit: false,
     });
   }
 
   // Row 2: 3 bricks centered
   const r2StartX = (BOARD_WIDTH - (3 * BRICK_WIDTH + 2 * BRICK_GAP_X)) / 2;
+  const colors2 = ["#EAB308", "#A3E635", "#EAB308"];
   for (let i = 0; i < 3; i++) {
     bricks.push({
       id: counter++,
@@ -106,7 +88,7 @@ function generatePyramidBricks(): Brick[] {
       y: BRICK_START_Y + 2 * BRICK_ROW_STEP,
       width: BRICK_WIDTH,
       height: BRICK_HEIGHT,
-      color: BRICK_SCHEME[2][i].color,
+      color: colors2[i],
       hit: false,
     });
   }
@@ -120,7 +102,7 @@ function generatePyramidBricks(): Brick[] {
     y: BRICK_START_Y + 3 * BRICK_ROW_STEP,
     width: BRICK_WIDTH,
     height: BRICK_HEIGHT,
-    color: "#94A3B8",
+    color: "#818CF8",
     hit: false,
   });
   bricks.push({
@@ -129,7 +111,7 @@ function generatePyramidBricks(): Brick[] {
     y: BRICK_START_Y + 3 * BRICK_ROW_STEP,
     width: BRICK_WIDTH,
     height: BRICK_HEIGHT,
-    color: "#94A3B8",
+    color: "#818CF8",
     hit: false,
   });
 
@@ -137,10 +119,11 @@ function generatePyramidBricks(): Brick[] {
 }
 
 function generateTopRow(startId: number): Brick[] {
-  const colors = ["#FEE400", "#FA8F8F", "#F97316", "#FA8F8F", "#FEE400"];
+  const palette = ROW_PALETTES[paletteCycle % ROW_PALETTES.length];
+  paletteCycle++;
   const startX = (BOARD_WIDTH - (5 * BRICK_WIDTH + 4 * BRICK_GAP_X)) / 2;
 
-  return colors.map((color, index) => ({
+  return palette.map((color, index) => ({
     id: startId + index,
     x: startX + index * (BRICK_WIDTH + BRICK_GAP_X),
     y: BRICK_START_Y,
@@ -161,7 +144,7 @@ function makeInitialBall(): Ball {
 }
 
 export default function BrickBreakerPage() {
-  const [bricks, setBricks] = useState<Brick[]>(generatePyramidBricks);
+  const [bricks, setBricks] = useState<Brick[]>(() => generatePyramidBricks(0));
   const [ball, setBall] = useState<Ball>(makeInitialBall);
   const [paddleX, setPaddleX] = useState((BOARD_WIDTH - PADDLE_WIDTH) / 2);
   const [score, setScore] = useState(0);
@@ -235,7 +218,7 @@ export default function BrickBreakerPage() {
     [best]
   );
 
-  // 60FPS Game Loop using requestAnimationFrame
+  // 60FPS Game Loop - Runs endlessly until ball falls out of bounds
   useEffect(() => {
     if (!playing) return;
 
@@ -244,7 +227,7 @@ export default function BrickBreakerPage() {
       const curBricks = [...bricksRef.current];
       const pX = paddleRef.current;
 
-      // Horizontal wall bounce
+      // 1. Horizontal wall bounces
       if (b.x <= 0) {
         b.x = 0;
         b.dx = Math.abs(b.dx);
@@ -253,7 +236,7 @@ export default function BrickBreakerPage() {
         b.dx = -Math.abs(b.dx);
       }
 
-      // Ceiling bounce
+      // 2. Ceiling bounce
       if (b.y <= 0) {
         b.y = 0;
         b.dy = Math.abs(b.dy);
@@ -262,7 +245,7 @@ export default function BrickBreakerPage() {
       b.x += b.dx;
       b.y += b.dy;
 
-      // Paddle collision
+      // 3. Paddle collision
       const paddleY = BOARD_HEIGHT - 38;
       if (
         b.dy > 0 &&
@@ -273,12 +256,19 @@ export default function BrickBreakerPage() {
       ) {
         b.dy = -Math.abs(b.dy);
         const hitOffset = (b.x + BALL_SIZE / 2 - (pX + PADDLE_WIDTH / 2)) / (PADDLE_WIDTH / 2);
-        b.dx = hitOffset * 6.5;
+        const clampedOffset = Math.max(-1, Math.min(1, hitOffset));
+        b.dx = clampedOffset * 6.5;
+
+        // Prevent dead vertical bounces
+        if (Math.abs(b.dx) < 0.8) {
+          b.dx = b.dx < 0 ? -1.5 : 1.5;
+        }
+
         b.y = paddleY - BALL_SIZE;
       }
 
-      // Brick collisions
-      let brickHitIndex = -1;
+      // 4. Brick collisions (with 2D side vs top/bottom bounce logic)
+      let hitIndex = -1;
       for (let i = 0; i < curBricks.length; i++) {
         const brick = curBricks[i];
         if (
@@ -288,33 +278,66 @@ export default function BrickBreakerPage() {
           b.y + BALL_SIZE > brick.y &&
           b.y < brick.y + brick.height
         ) {
-          brickHitIndex = i;
+          hitIndex = i;
           break;
         }
       }
 
-      if (brickHitIndex >= 0) {
-        b.dy *= -1;
-        curBricks[brickHitIndex].hit = true;
+      if (hitIndex >= 0) {
+        const hitBrick = curBricks[hitIndex];
+        hitBrick.hit = true;
+
+        // Determine bounce axis based on smallest penetration overlap
+        const overlapLeft = b.x + BALL_SIZE - hitBrick.x;
+        const overlapRight = hitBrick.x + hitBrick.width - b.x;
+        const overlapTop = b.y + BALL_SIZE - hitBrick.y;
+        const overlapBottom = hitBrick.y + hitBrick.height - b.y;
+
+        const minOverlapX = Math.min(overlapLeft, overlapRight);
+        const minOverlapY = Math.min(overlapTop, overlapBottom);
+
+        if (minOverlapX < minOverlapY) {
+          b.dx *= -1;
+        } else {
+          b.dy *= -1;
+        }
 
         scoreRef.current += 15;
         setScore(scoreRef.current);
 
-        const completedRowY = curBricks[brickHitIndex].y;
-        const completedRow = curBricks.filter((brick) => brick.y === completedRowY);
-        if (completedRow.every((brick) => brick.hit)) {
-          const shiftedBricks = curBricks
-            .filter((brick) => brick.y !== completedRowY && !brick.hit)
-            .map((brick) => ({ ...brick, y: brick.y + BRICK_ROW_STEP }));
+        // Check if the entire row containing this brick is completely destroyed
+        const hitRowY = hitBrick.y;
+        const bricksInSameRow = curBricks.filter((bk) => Math.abs(bk.y - hitRowY) < 2);
+        const isRowCleared = bricksInSameRow.length > 0 && bricksInSameRow.every((bk) => bk.hit);
+
+        if (isRowCleared) {
+          scoreRef.current += 50; // Row clear bonus
+          setScore(scoreRef.current);
+
+          // Remove the cleared row, slide rows ABOVE down to fill space, keep rows below in place
+          const remaining = curBricks
+            .filter((bk) => Math.abs(bk.y - hitRowY) >= 2 && !bk.hit)
+            .map((bk) => {
+              if (bk.y < hitRowY - 2) {
+                return { ...bk, y: bk.y + BRICK_ROW_STEP };
+              }
+              return bk;
+            });
+
+          // Spawn a fresh new top row at BRICK_START_Y
           const newTopRow = generateTopRow(nextBrickIdRef.current);
           nextBrickIdRef.current += newTopRow.length;
-          curBricks.splice(0, curBricks.length, ...shiftedBricks, ...newTopRow);
 
-          if (shiftedBricks.some((brick) => brick.y + brick.height >= paddleY)) {
-            bricksRef.current = curBricks;
-            setBricks([...curBricks]);
-            finishGame(scoreRef.current);
-            return;
+          curBricks.splice(0, curBricks.length, ...remaining, ...newTopRow);
+        } else {
+          // If all active bricks on screen are wiped out, respawn a full fresh layout
+          const anyActiveRemaining = curBricks.some((bk) => !bk.hit);
+          if (!anyActiveRemaining) {
+            scoreRef.current += 150; // Board wipe bonus
+            setScore(scoreRef.current);
+            const freshBricks = generatePyramidBricks(nextBrickIdRef.current);
+            nextBrickIdRef.current += freshBricks.length;
+            curBricks.splice(0, curBricks.length, ...freshBricks);
           }
         }
 
@@ -322,7 +345,7 @@ export default function BrickBreakerPage() {
         setBricks([...curBricks]);
       }
 
-      // Floor collision (Game Over)
+      // 5. Floor collision - ONLY event that ends the game!
       if (b.y > BOARD_HEIGHT) {
         finishGame(scoreRef.current);
         return;
@@ -341,7 +364,8 @@ export default function BrickBreakerPage() {
 
   const startGame = () => {
     submittedRef.current = false;
-    const initialBricks = generatePyramidBricks();
+    paletteCycle = 0;
+    const initialBricks = generatePyramidBricks(0);
     const initialBall = makeInitialBall();
     const initialPaddleX = (BOARD_WIDTH - PADDLE_WIDTH) / 2;
     nextBrickIdRef.current = 100;
@@ -430,7 +454,7 @@ export default function BrickBreakerPage() {
               </div>
             </div>
 
-            {/* Game Canvas Container with deep navy background */}
+            {/* Game Canvas Container */}
             <div
               ref={boardRef}
               onPointerMove={(e) => movePaddle(e.clientX)}
@@ -520,7 +544,9 @@ export default function BrickBreakerPage() {
             </div>
 
             <p className="mt-3 text-center text-xs tracking-wide text-slate-400">
-              Drag finger or mouse to steer the paddle. Keys: <kbd className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-300">←</kbd> <kbd className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-300">→</kbd>
+              Drag finger or mouse to steer the paddle. Keys:{" "}
+              <kbd className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-300">←</kbd>{" "}
+              <kbd className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-300">→</kbd>
             </p>
           </section>
 

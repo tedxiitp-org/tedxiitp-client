@@ -11,9 +11,9 @@ type Direction = "up" | "down" | "left" | "right";
 type Difficulty = "easy" | "medium" | "hard";
 
 const SPEEDS: Record<Difficulty, number> = {
-  easy: 180,    // Slow & relaxed
-  medium: 120,  // Standard Google Snake pace
-  hard: 75,     // Fast arcade pace
+  easy: 180,
+  medium: 120,
+  hard: 75,
 };
 
 const COLS = 20;
@@ -38,28 +38,38 @@ function nextPoint(head: Point, direction: Direction): Point {
   }
 }
 
-function randomFood(snake: Point[]): Point {
+function getRandomFood(snake: Point[]): Point | null {
+  const occupied = new Set(snake.map((p) => `${p.x},${p.y}`));
   const available: Point[] = [];
+
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
-      if (!snake.some((part) => part.x === x && part.y === y)) {
+      if (!occupied.has(`${x},${y}`)) {
         available.push({ x, y });
       }
     }
   }
-  return available[Math.floor(Math.random() * available.length)] ?? { x: 14, y: 7 };
+
+  if (available.length === 0) return null; // Board completely filled (win condition)
+  return available[Math.floor(Math.random() * available.length)];
 }
 
 export default function GoogleSnakeWithLevels() {
   const [snake, setSnake] = useState<Point[]>(START);
   const [food, setFood] = useState<Point>({ x: 14, y: 7 });
+  const foodRef = useRef<Point>({ x: 14, y: 7 });
+
   const [direction, setDirection] = useState<Direction>("right");
   const directionRef = useRef<Direction>("right");
+  const lastMovedDirectionRef = useRef<Direction>("right");
+
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [playing, setPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+
   const [username, setUsername] = useState("");
   const [usernameInput, setUsernameInput] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
@@ -88,16 +98,13 @@ export default function GoogleSnakeWithLevels() {
     if (!music) return;
 
     if (playing) {
-      void music.play().catch(() => {
-        // Playback can be blocked until the browser receives a user gesture.
-      });
+      void music.play().catch(() => {});
     } else {
       music.pause();
       music.currentTime = 0;
     }
   }, [playing]);
 
-  // Load high score per difficulty
   useEffect(() => {
     const storedBest = Number(
       localStorage.getItem(`tedx_snake_highscore_${difficulty}`) || 0
@@ -111,8 +118,9 @@ export default function GoogleSnakeWithLevels() {
     }
   }, [difficulty]);
 
+  // Prevent immediate self-reversal before the next tick executes
   const changeDirection = useCallback((next: Direction) => {
-    const current = directionRef.current;
+    const current = lastMovedDirectionRef.current;
     const opposite =
       (current === "up" && next === "down") ||
       (current === "down" && next === "up") ||
@@ -160,7 +168,6 @@ export default function GoogleSnakeWithLevels() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [changeDirection]);
 
-  // Touch Swipe detection
   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
@@ -184,31 +191,36 @@ export default function GoogleSnakeWithLevels() {
     touchStartRef.current = null;
   };
 
-  // Main game tick (frequency depends on difficulty speed)
+  // Main game tick: Decoupled from food state, runs strictly on speed & play status
   useEffect(() => {
     if (!playing) return;
 
     const tickMs = SPEEDS[difficulty];
     const timer = setInterval(() => {
       setSnake((current) => {
-        const head = nextPoint(current[0], directionRef.current);
+        const dir = directionRef.current;
+        lastMovedDirectionRef.current = dir;
+        const head = nextPoint(current[0], dir);
 
+        // Boundary collision check
         if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
           setPlaying(false);
           setGameOver(true);
           return current;
         }
 
-        if (current.some((part) => part.x === head.x && part.y === head.y)) {
+        // Tail collision check (ignore tail tip if it's about to vacate, unless eating)
+        const isEating = head.x === foodRef.current.x && head.y === foodRef.current.y;
+        const bodyToCheck = isEating ? current : current.slice(0, -1);
+        if (bodyToCheck.some((part) => part.x === head.x && part.y === head.y)) {
           setPlaying(false);
           setGameOver(true);
           return current;
         }
 
-        const ate = head.x === food.x && head.y === food.y;
         const updated = [head, ...current];
 
-        if (ate) {
+        if (isEating) {
           setScore((s) => {
             const nextScore = s + 1;
             setBest((b) => {
@@ -218,7 +230,17 @@ export default function GoogleSnakeWithLevels() {
             });
             return nextScore;
           });
-          setFood(randomFood(updated));
+
+          // Continuously spawn next food until board is full
+          const nextApple = getRandomFood(updated);
+          if (!nextApple) {
+            setPlaying(false);
+            setGameWon(true);
+            return updated;
+          }
+
+          foodRef.current = nextApple;
+          setFood(nextApple);
         } else {
           updated.pop();
         }
@@ -228,9 +250,8 @@ export default function GoogleSnakeWithLevels() {
     }, tickMs);
 
     return () => clearInterval(timer);
-  }, [food, playing, difficulty]);
+  }, [playing, difficulty]);
 
-  // Submit high score to backend
   useEffect(() => {
     if (playing || score === 0) return;
     const userId = localStorage.getItem("tedx_userid");
@@ -257,12 +278,17 @@ export default function GoogleSnakeWithLevels() {
   };
 
   const resetGame = () => {
+    const initialFood = getRandomFood(START) ?? { x: 14, y: 7 };
     directionRef.current = "right";
+    lastMovedDirectionRef.current = "right";
+    foodRef.current = initialFood;
+
     setDirection("right");
     setSnake(START);
-    setFood(randomFood(START));
+    setFood(initialFood);
     setScore(0);
     setGameOver(false);
+    setGameWon(false);
     setPlaying(true);
   };
 
@@ -295,7 +321,6 @@ export default function GoogleSnakeWithLevels() {
 
   return (
     <div className="min-h-dvh w-full bg-[#1e1e1e] text-white flex flex-col items-center px-2 sm:px-6 py-2 sm:py-4 overflow-x-hidden overflow-y-auto select-none touch-none">
-      {/* Registration Ribbon (if needed) */}
       {!username && (
         <form
           onSubmit={handleRegister}
@@ -318,13 +343,11 @@ export default function GoogleSnakeWithLevels() {
         </form>
       )}
 
-      {/* Main Container */}
       <div className="flex flex-col items-center justify-center w-full max-w-5xl my-auto">
         <div
           className="flex flex-col rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden border border-white/5"
           style={{ width: "min(96vw, 1000px)" }}
         >
-          {/* Top Google Header Bar */}
           <div className="flex h-12 sm:h-14 items-center justify-between bg-[#4a752c] px-3 sm:px-6 text-white shrink-0">
             <div className="flex items-center gap-3 sm:gap-6">
               <Link
@@ -334,13 +357,11 @@ export default function GoogleSnakeWithLevels() {
                 <ArrowLeft className="h-4 w-4 stroke-[2.5]" />
               </Link>
 
-              {/* Apple Score */}
               <div className="flex items-center gap-1.5 font-bold text-base sm:text-2xl">
                 <span>🍎</span>
                 <span>{score}</span>
               </div>
 
-              {/* Trophy & Level Indicator */}
               <div className="flex items-center gap-1.5 font-bold text-base sm:text-2xl">
                 <span>🏆</span>
                 <span className="text-white/90">{best}</span>
@@ -366,7 +387,6 @@ export default function GoogleSnakeWithLevels() {
             </div>
           </div>
 
-          {/* Lawn Board Canvas */}
           <div
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -375,7 +395,6 @@ export default function GoogleSnakeWithLevels() {
               aspectRatio: `${COLS} / ${ROWS}`,
             }}
           >
-            {/* Checkerboard Cells */}
             <div
               className="grid h-full w-full rounded-xl overflow-hidden shadow-inner"
               style={{
@@ -397,7 +416,6 @@ export default function GoogleSnakeWithLevels() {
 
                 return (
                   <div key={i} className={`relative h-full w-full ${cellBg}`}>
-                    {/* Apple */}
                     {isFood && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="relative h-[82%] w-[82%] max-h-8 max-w-8 rounded-full bg-[#e7471d] shadow-sm flex items-center justify-center">
@@ -407,14 +425,12 @@ export default function GoogleSnakeWithLevels() {
                       </div>
                     )}
 
-                    {/* Snake Head */}
                     {isHead && (
                       <div className="absolute inset-0 z-10 m-[0.5px] sm:m-px rounded-full bg-[#4e7cf6] shadow-sm">
                         {renderEyes()}
                       </div>
                     )}
 
-                    {/* Snake Body */}
                     {isBody && (
                       <div className="absolute inset-0 m-[0.5px] sm:m-px rounded-[3px] sm:rounded-[6px] bg-[#4e7cf6]" />
                     )}
@@ -423,7 +439,6 @@ export default function GoogleSnakeWithLevels() {
               })}
             </div>
 
-            {/* Desktop Fullscreen & Reset Buttons */}
             <div className="hidden sm:flex absolute bottom-6 right-6 z-20 flex-col gap-2">
               <button
                 onClick={() => {
@@ -447,19 +462,17 @@ export default function GoogleSnakeWithLevels() {
               </button>
             </div>
 
-            {/* Start & Game Over Screen Overlay */}
-            {(!playing || gameOver) && (
+            {(!playing || gameOver || gameWon) && (
               <div className="absolute inset-2 sm:inset-4 z-30 flex flex-col items-center justify-center rounded-xl bg-black/50 backdrop-blur-[3px] text-white p-4">
-                {gameOver ? (
+                {gameOver || gameWon ? (
                   <div className="flex flex-col items-center">
                     <span className="text-2xl sm:text-5xl font-black drop-shadow mb-1">
-                      GAME OVER
+                      {gameWon ? "YOU WIN! 🏆" : "GAME OVER"}
                     </span>
                     <p className="text-xs sm:text-base font-semibold mb-3 sm:mb-4 text-white/95">
                       Apples: {score} · Best ({difficulty}): {best}
                     </p>
 
-                    {/* Level Selector */}
                     <div className="mb-4 flex items-center bg-black/40 border border-white/10 rounded-full p-1 shadow-inner">
                       {(["easy", "medium", "hard"] as Difficulty[]).map((level) => (
                         <button
@@ -496,7 +509,6 @@ export default function GoogleSnakeWithLevels() {
                       Use ↑ ↓ ← → to move your snake
                     </p>
 
-                    {/* Difficulty Pill Toggle */}
                     <div className="mb-4 sm:mb-6 flex items-center bg-black/40 border border-white/10 rounded-full p-1 shadow-inner">
                       {(["easy", "medium", "hard"] as Difficulty[]).map((level) => (
                         <button
@@ -535,7 +547,6 @@ export default function GoogleSnakeWithLevels() {
         Use ↑ ↓ ← → to move your snake
       </p>
 
-      {/* Mobile D-Pad (Anchored at the bottom without scrolling) */}
       <div className="order-1 flex flex-col items-center gap-1 shrink-0 pb-1 pt-1 lg:hidden">
         <button
           type="button"
