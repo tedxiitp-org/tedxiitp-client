@@ -69,7 +69,7 @@ export default function UpdateDialog() {
           <div className="relative min-h-[340px] w-full bg-black md:min-h-full">
             <Image
               src="/WhatsApp Image 2026-09-02 at 11.44.57.jpeg" // Replace with your image filename
-              alt="TEDxIITPatna Terra Incognita Tickets"
+              alt="TEDxIIT Patna Terra Incognita Tickets"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-contain p-2"
