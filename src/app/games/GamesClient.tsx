@@ -25,6 +25,14 @@ const games = [
     active: true,
   },
   {
+    id: "maze",
+    title: "3D Maze Escape",
+    description: "Explore multi-floor 3D corridors, navigate staircases, find the golden portal and escape!",
+    thumbnail: "/maze-thumbnail.png",
+    href: "/games/maze",
+    active: true,
+  },
+  {
     id: "water-toss",
     title: "Ring Toss",
     description: "Collect specimens from the deep and master the ocean currents.",
