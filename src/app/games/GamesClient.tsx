@@ -33,6 +33,22 @@ const games = [
     active: true,
   },
   {
+    id: "water-toss",
+    title: "Ring Toss",
+    description: "Collect specimens from the deep and master the ocean currents.",
+    thumbnail: "/ringtoss1.png",
+    href: "/games/watertoss",
+    active: true,
+  },
+  {
+    id: "arrowEscape",
+    title: "Arrow Escape",
+    description: "Beyond the maze, every arrow has a direction—find the pattern and break free.",
+    thumbnail: "/arrowEscapeThumbnail.png",
+    href: "/games/arrow-escape",
+    active: true,
+  },
+  {
     id: "game3",
     title: "Endless Sail",
     description: "Ready to explore the unexplored!!",
