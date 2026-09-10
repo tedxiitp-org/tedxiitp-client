@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Squid Game Maze Escape</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- Game Canvas -->
+    <div id="canvas-container">
+        <canvas id="maze-canvas"></canvas>
+    </div>
+
+    <!-- HUD Overlay -->
+    <div id="hud">
+        <!-- Top Left: Title and Status -->
+        <div class="hud-panel status-panel">
+            <h1 class="game-title">SQUID MAZE</h1>
+            <div class="status-item">
+                <span class="label">MISSION:</span>
+                <span class="value glowing-text">FIND THE GOLDEN PORTAL</span>
+            </div>
+            <div class="status-item">
+                <span class="label">LOCATION:</span>
+                <span id="player-coords" class="value">X: 0.0, Y: 0.0, Z: 0.0</span>
+            </div>
+            <div class="status-item" style="margin-top: 10px; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                <span style="color: #94a3b8; line-height: 1.4;">Follow the neon floor guide line & climb staircases to find the golden portal!</span>
+            </div>
+        </div>
+
+        <!-- Bottom Center: Controls Hint -->
+        <div class="hud-panel controls-panel">
+            <div class="control-hints">
+                <div class="control-key-group">
+                    <span class="key">W</span> / <span class="key">↑</span>
+                    <span class="hint-label">FORWARD</span>
+                </div>
+                <div class="control-key-group">
+                    <span class="key">S</span> / <span class="key">↓</span>
+                    <span class="hint-label">BACKWARD</span>
+                </div>
+                <div class="control-key-group">
+                    <span class="key">A</span> / <span class="key">←</span>
+                    <span class="hint-label">TURN LEFT</span>
+                </div>
+                <div class="control-key-group">
+                    <span class="key">D</span> / <span class="key">→</span>
+                    <span class="hint-label">TURN RIGHT</span>
+                </div>
+                <div class="control-key-group">
+                    <span class="key" style="min-width: 60px; text-align: center;">SPACE</span>
+                    <span class="hint-label">JUMP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Joystick Controls -->
+    <div id="mobile-controls">
+        <div id="joystick-base">
+            <div id="joystick-stick"></div>
+        </div>
+        <button id="mobile-jump-btn">JUMP</button>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loader-screen">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <h2 class="loader-title">LOADING SQUID MAP...</h2>
+            <p class="loader-sub">Analyzing 3D Floors and Staircases</p>
+        </div>
+    </div>
+
+    <!-- Victory Screen Overlay (hidden initially) -->
+    <div id="victory-screen" class="screen-overlay hidden">
+        <div class="overlay-card glass">
+            <div class="victory-icon">🎉</div>
+            <h1 class="victory-title glowing-text-gold">PORTAL REACHED</h1>
+            <p class="victory-message">Success! You navigated the multi-floor complex and escaped the matrix.</p>
+            <div style="margin-bottom: 20px;">
+                <p style="font-size: 0.85rem; color: #a0a0a0; margin: 0 0 4px 0;">Final Score</p>
+                <p id="victory-score-val" style="font-size: 2.2rem; font-weight: 900; color: #fff; margin: 0; font-family: 'Orbitron', sans-serif;"></p>
+            </div>
+            <button id="restart-btn" class="btn btn-glow">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script type="module" src="./script.js"></script>
+</body>
+</html>
