@@ -306,7 +306,12 @@ export type TicketTier =
   | "MERCH_ONLY"
   | "UNRECOGNIZED";
 
-export type RegistrationStatus = "PENDING" | "APPROVED" | "REJECTED" | "DUPLICATE";
+export type RegistrationStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "DUPLICATE"
+  | "REMOVED";
 
 export type EmailSource =
   | "EMAIL_COLUMN"
@@ -413,6 +418,9 @@ export interface SyncResult {
   updated: number;
   unchanged: number;
   duplicatesMarked: number;
+  removedFromSheet: number;
+  restored: number;
+  keptDespiteRemoval: number;
   syncedAt: string;
 }
 
@@ -440,6 +448,13 @@ export function rejectRegistration(id: string, notes?: string) {
   return request<{ success: boolean; data: Registration }>(
     `/api/registrations/${id}/reject`,
     { method: "POST", body: JSON.stringify({ notes }) }
+  );
+}
+
+export function purgeRemovedRegistrations() {
+  return request<{ success: boolean; data: { deleted: number } }>(
+    "/api/registrations/purge-removed",
+    { method: "POST" }
   );
 }
 

@@ -25,6 +25,7 @@ const STATUS_STYLES: Record<RegistrationStatus, string> = {
   APPROVED: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   REJECTED: "bg-neutral-500/15 text-neutral-300 border-neutral-500/30",
   DUPLICATE: "bg-sky-500/15 text-sky-300 border-sky-500/30",
+  REMOVED: "bg-neutral-700/20 text-neutral-400 border-neutral-600/40",
 };
 
 const TIER_LABELS: Record<string, string> = {
@@ -145,6 +146,13 @@ export default function RegistrationsPanel() {
       const parts = [`${registrations} registration${registrations === 1 ? "" : "s"} from ${rowsRead} sheet rows`];
       if (created > 0) parts.push(`${created} new`);
       if (duplicatesMarked > 0) parts.push(`${duplicatesMarked} marked duplicate`);
+      if (response.data.removedFromSheet > 0) {
+        parts.push(`${response.data.removedFromSheet} no longer in the sheet`);
+      }
+      if (response.data.restored > 0) parts.push(`${response.data.restored} restored`);
+      if (response.data.keptDespiteRemoval > 0) {
+        parts.push(`${response.data.keptDespiteRemoval} kept (tickets already sent)`);
+      }
       if (collapsedRows > 0) {
         parts.push(
           `${collapsedRows} identical row${collapsedRows === 1 ? "" : "s"} merged (same time, name and transaction)`
@@ -277,7 +285,7 @@ export default function RegistrationsPanel() {
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {(["PENDING", "APPROVED", "REJECTED", "DUPLICATE", ""] as const).map((value) => (
+        {(["PENDING", "APPROVED", "REJECTED", "DUPLICATE", "REMOVED", ""] as const).map((value) => (
           <button
             key={value || "ALL"}
             type="button"
