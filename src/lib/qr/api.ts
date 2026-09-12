@@ -519,6 +519,28 @@ export interface PumpResult {
   done: boolean;
 }
 
+export interface BatchRecipient {
+  registrationId: string;
+  name: string | null;
+  email: string | null;
+  sessions: Session[];
+}
+
+export interface BatchPreview {
+  toSend: number;
+  alreadyDelivered: number;
+  missingEmail: number;
+  approvedRegistrations: number;
+  recipients: BatchRecipient[];
+  recipientsTruncated: boolean;
+}
+
+export function previewBatch() {
+  return request<{ success: boolean; data: BatchPreview }>("/api/jobs/preview", {
+    method: "GET",
+  });
+}
+
 export function createBatch(input: {
   label: string;
   registrationIds?: string[];
@@ -526,14 +548,24 @@ export function createBatch(input: {
 }) {
   return request<{
     success: boolean;
-    data: { jobId: string; totalItems: number; registrationsSkipped: number };
+    data: {
+      jobId: string;
+      totalItems: number;
+      alreadyDelivered: number;
+      missingEmail: number;
+    };
   }>("/api/jobs", { method: "POST", body: JSON.stringify(input) });
 }
 
-export function pumpBatch(jobId: string, budgetMs?: number, throttleMs?: number) {
+export function pumpBatch(
+  jobId: string,
+  budgetMs?: number,
+  throttleMs?: number,
+  concurrency?: number
+) {
   return request<{ success: boolean; data: PumpResult }>(`/api/jobs/${jobId}/pump`, {
     method: "POST",
-    body: JSON.stringify({ budgetMs, throttleMs }),
+    body: JSON.stringify({ budgetMs, throttleMs, concurrency }),
   });
 }
 

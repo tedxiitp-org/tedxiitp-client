@@ -19,6 +19,7 @@ import {
   type RegistrationTicket,
   type SyncState,
 } from "@/lib/qr/api";
+import { LoadingRow, SkeletonRows, Spinner } from "./Spinner";
 
 const STATUS_STYLES: Record<RegistrationStatus, string> = {
   PENDING: "bg-amber-500/15 text-amber-300 border-amber-500/30",
@@ -60,6 +61,7 @@ export default function RegistrationsPanel() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showMerchOnly, setShowMerchOnly] = useState(false);
+  const [loadingRows, setLoadingRows] = useState(true);
   const [syncState, setSyncState] = useState<SyncState | null>(null);
   const [liveSync, setLiveSync] = useState(true);
 
@@ -78,6 +80,8 @@ export default function RegistrationsPanel() {
       setError(null);
     } catch (err) {
       setError((err as ApiError).message);
+    } finally {
+      setLoadingRows(false);
     }
   }, [status, search, page, showMerchOnly]);
 
@@ -250,8 +254,9 @@ export default function RegistrationsPanel() {
             type="button"
             onClick={runSync}
             disabled={busy}
-            className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50 sm:flex-none"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50 sm:flex-none"
           >
+            {busy && <Spinner />}
             {busy ? "Working…" : "Sync now"}
           </button>
         </div>
@@ -351,7 +356,13 @@ export default function RegistrationsPanel() {
         </div>
       )}
 
-      <div className="mt-4 hidden overflow-x-auto lg:block">
+      {loadingRows && (
+        <div className="mt-4">
+          <SkeletonRows rows={6} />
+        </div>
+      )}
+
+      <div className={`mt-4 hidden overflow-x-auto ${loadingRows ? "" : "lg:block"}`}>
         <table className="w-full min-w-[820px] text-left text-sm">
           <thead className="border-b border-neutral-800 text-xs uppercase tracking-wide text-neutral-500">
             <tr>
@@ -442,7 +453,7 @@ export default function RegistrationsPanel() {
         </table>
       </div>
 
-      <ul className="mt-4 space-y-3 lg:hidden">
+      <ul className={`mt-4 space-y-3 ${loadingRows ? "hidden" : "lg:hidden"}`}>
         {rows.map((row) => (
           <li
             key={row._id}

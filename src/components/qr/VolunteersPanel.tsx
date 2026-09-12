@@ -10,6 +10,7 @@ import {
   type Session,
   type Volunteer,
 } from "@/lib/qr/api";
+import { SkeletonRows, Spinner } from "./Spinner";
 
 const SESSION_LABELS: Record<Session, string> = {
   SESSION_1: "Session 1",
@@ -25,6 +26,7 @@ export default function VolunteersPanel() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     try {
@@ -33,6 +35,8 @@ export default function VolunteersPanel() {
       setError(null);
     } catch (err) {
       setError((err as ApiError).message);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -158,8 +162,9 @@ export default function VolunteersPanel() {
         <button
           type="submit"
           disabled={busy}
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50 sm:col-span-2"
+          className="flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50 sm:col-span-2"
         >
+          {busy && <Spinner />}
           Add volunteer
         </button>
       </form>
@@ -167,7 +172,13 @@ export default function VolunteersPanel() {
       {message && <p className="mt-3 text-sm text-emerald-400">{message}</p>}
       {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
 
-      <ul className="mt-5 space-y-2">
+      {loading && (
+        <div className="mt-5">
+          <SkeletonRows rows={3} />
+        </div>
+      )}
+
+      <ul className={loading ? "hidden" : "mt-5 space-y-2"}>
         {volunteers.map((volunteer) => (
           <li
             key={volunteer._id}
