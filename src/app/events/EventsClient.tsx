@@ -18,6 +18,7 @@ const events: EventItem[] = [
     title: "Funfair",
     dateTime: "12th September 2026",
     location: "SAC Hall",
+    image: "/Funfair.png",
     description:
       "More details about this upcoming event will be announced soon. Stay tuned for exciting speakers and ideas!",
   },
@@ -129,7 +130,7 @@ export default function EventsClient() {
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-48 object-cover rounded-xl mb-6"
+                    className="w-full shrink-0 object-cover rounded-xl mb-6"
                   />
                 ) : (
                   <div className="w-full h-48 bg-zinc-800 rounded-xl mb-6 animate-pulse" />
