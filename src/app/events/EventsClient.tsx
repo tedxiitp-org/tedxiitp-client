@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight, MessageSquareHeart } from "lucide-react";
-import CountdownTimer from "./countDownTimer";
+import CountdownTimer, { TARGET_DATE } from "./countDownTimer";
 
 interface EventItem {
   title: string;
@@ -17,13 +17,40 @@ const events: EventItem[] = [
   {
     title: "Funfair",
     dateTime: "12th September 2026",
-    location: "TBD",
+    location: "SAC Hall",
     description:
       "More details about this upcoming event will be announced soon. Stay tuned for exciting speakers and ideas!",
   },
 ];
 
 export default function EventsClient() {
+  const [happeningText, setHappeningText] = useState("Happening Soon");
+
+  useEffect(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const isSameDate = (d1: Date, d2: Date) =>
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+
+    if (isSameDate(TARGET_DATE, today)) {
+      setHappeningText("Happening Today");
+    } else if (isSameDate(TARGET_DATE, tomorrow)) {
+      setHappeningText("Happening Tomorrow");
+    } else {
+      setHappeningText(
+        `Happening on ${TARGET_DATE.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}`
+      );
+    }
+  }, []);
+
   return (
     <main
       className="min-h-screen text-white pb-16 bg-black bg-cover bg-center bg-fixed"
@@ -43,6 +70,16 @@ export default function EventsClient() {
             Explore the journey of TEDx from thought-provoking pre-events to the main stage, and revisit the conversations that continue to inspire long after the applause fades.
           </p>
         </motion.div>
+      </section>
+
+      <section className="px-6 md:px-16 py-16 border-t border-zinc-900">
+        <div className="flex items-center gap-3 mb-10">
+          <h2 className="text-4xl font-bold font-['Bebas_Neue'] tracking-wide">
+            <span className="text-5xl text-red-600">TED<sup className="text-3xl -top-3 relative">x</sup></span><span className="text-5xl">IIT Patna</span>
+            <span className="block text-6xl md:text-8xl">{happeningText}</span>
+          </h2>
+        </div>
+        <CountdownTimer />
       </section>
 
       {/* Community Wall CTA */}
@@ -76,7 +113,7 @@ export default function EventsClient() {
       <section className="px-6 md:px-16 py-12">
         <div className="flex items-center gap-3 mb-10">
           <Calendar className="text-red-500" size={32} />
-          <h2 className="text-4xl font-bold font-['Bebas_Neue'] tracking-wide">Upcoming Events</h2>
+          <h2 className="text-4xl font-bold font-['Bebas_Neue'] tracking-wide">Events</h2>
         </div>
 
         {events.length === 0 ? (
@@ -106,15 +143,6 @@ export default function EventsClient() {
             ))}
           </div>
         )}
-      </section>
-      <section className="px-6 md:px-16 py-16 border-t border-zinc-900">
-        <div className="flex items-center gap-3 mb-10">
-          <h2 className="text-4xl font-bold font-['Bebas_Neue'] tracking-wide">
-            <span className="text-5xl text-red-600">TED<sup className="text-3xl -top-3 relative">x</sup></span><span className="text-5xl">IIT Patna</span>
-            <span className="block text-6xl md:text-8xl">Coming Soon...</span>
-          </h2>
-        </div>
-        <CountdownTimer />
       </section>
     </main>
   );
