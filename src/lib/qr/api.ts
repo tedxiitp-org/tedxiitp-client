@@ -400,6 +400,8 @@ export interface RegistrationStats {
   expectedTickets: number;
   issuedTickets: number;
   emailedTickets: number;
+  manualTickets: number;
+  manualEmailedTickets: number;
   sheetsConfigured: boolean;
 }
 

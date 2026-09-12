@@ -274,11 +274,20 @@ export default function RegistrationsPanel() {
       )}
 
       {stats && (
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
           <Stat label="Pending" value={stats.byStatus.PENDING ?? 0} />
           <Stat label="Approved" value={stats.byStatus.APPROVED ?? 0} />
           <Stat label="Tickets expected" value={stats.expectedTickets} />
-          <Stat label="Emailed" value={`${stats.emailedTickets} / ${stats.issuedTickets}`} />
+          <Stat
+            label="Emailed"
+            value={`${stats.emailedTickets} / ${stats.expectedTickets}`}
+            hint="from approved registrations"
+          />
+          <Stat
+            label="Manual"
+            value={`${stats.manualEmailedTickets} / ${stats.manualTickets}`}
+            hint="issued outside the sheet"
+          />
         </div>
       )}
 
@@ -581,11 +590,20 @@ export default function RegistrationsPanel() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number | string }) {
+function Stat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: number | string;
+  hint?: string;
+}) {
   return (
     <div className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2">
       <p className="text-xs uppercase tracking-wide text-neutral-500">{label}</p>
       <p className="text-xl font-semibold text-white tabular-nums">{value}</p>
+      {hint && <p className="mt-0.5 text-[11px] leading-tight text-neutral-600">{hint}</p>}
     </div>
   );
 }
